@@ -6,14 +6,16 @@ public class NewBehaviourScript : MonoBehaviour
 {
     public Material[] darkSquareMaterial;
     public Material[] lightSquareMaterial;
-
-
-
+    [SerializeField] private Transform cam;
     private GameObject[,] board;
+
+    private readonly int BOARD_LENGTH_X = 4;
+    private readonly int BOARD_LENGTH_Y = 8;
 
     private void Awake()
     {
-        GenerateTiles(4, 8);
+        cam.transform.position = new Vector3((float)BOARD_LENGTH_X/2 - 0.5f, (float)BOARD_LENGTH_Y/2 - 0.5f, -10f);
+        GenerateTiles(BOARD_LENGTH_X, BOARD_LENGTH_Y);
         //GeneratePieces();
     }
 
@@ -25,27 +27,27 @@ public class NewBehaviourScript : MonoBehaviour
             for (int x = 0; x < boardWidth; x++)
                 board[x, y] = GenerateTile(x, y);
         
-
     }
 
     private GameObject GenerateTile(int x, int y)
     {
         GameObject tile = GameObject.CreatePrimitive(PrimitiveType.Quad);
         tile.name = string.Format("{0}, {1}", x, y);
-        if((x+y)%2 == 0)
+        tile.transform.parent = transform;
+
+        if ((x + y) % 2 == 0)
             tile.GetComponent<MeshRenderer>().material = lightSquareMaterial[0];
         else
             tile.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
 
-        tile.transform.parent = transform;
         //tile.transform.Rotate(90.0f, 0.0f, 0.0f);
-        tile.transform.position = new Vector3(x-1.5f, y+0.5F, 0.0f);
+        tile.transform.position = new Vector3(x, y, 0.0f);
         tile.AddComponent<BoxCollider>();
-
-
 
 
         return tile;
     }
+
+
 
 }

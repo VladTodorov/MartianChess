@@ -257,6 +257,7 @@ MonoBehaviour:
   lightSquareMaterial:
   - {fileID: 2100000, guid: 46a596930d2f7dd44939a469c0da321a, type: 2}
   - {fileID: 0}
+  cam: {fileID: 519420032}
 --- !u!1 &2043589492
 GameObject:
   m_ObjectHideFlags: 0
