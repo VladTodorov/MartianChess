@@ -253,10 +253,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   darkSquareMaterial:
   - {fileID: 2100000, guid: a00f1015a2fe18c45bf58698c77c41e1, type: 2}
-  - {fileID: 0}
+  - {fileID: 2100000, guid: e4b1e19b4d9a280458184b78094cf72a, type: 2}
   lightSquareMaterial:
   - {fileID: 2100000, guid: 46a596930d2f7dd44939a469c0da321a, type: 2}
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 5717f0d818cfa1742949bfb394dcb76e, type: 2}
   cam: {fileID: 519420032}
 --- !u!1 &2043589492
 GameObject:

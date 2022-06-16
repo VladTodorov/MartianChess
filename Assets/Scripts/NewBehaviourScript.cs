@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+
 
 public class NewBehaviourScript : MonoBehaviour
 {
@@ -19,6 +21,48 @@ public class NewBehaviourScript : MonoBehaviour
         //GeneratePieces();
     }
 
+
+    private GameObject currHighlightedTile;
+    void Update()
+    {
+        Ray ray;
+        RaycastHit hit;
+        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, 50.0f))
+        {
+            RemoveHighlight(hit.collider.gameObject, 1);
+
+            if (currHighlightedTile == null)
+            {
+                currHighlightedTile = hit.collider.gameObject;
+            }
+            else if (currHighlightedTile != hit.collider.gameObject)
+            {
+                RemoveHighlight(currHighlightedTile, 0);
+                currHighlightedTile = hit.collider.gameObject;
+            }
+
+        }
+        else
+        {
+            if (currHighlightedTile != null)
+            {
+                RemoveHighlight(currHighlightedTile, 0);
+            }
+        }
+    }
+
+    private void RemoveHighlight(GameObject tile, int shade)
+    {
+        int[] tilePos = tile.name.Split(' ').Take(2).Select(int.Parse).ToArray();
+
+        if ((tilePos[0] + tilePos[1]) % 2 == 0)
+            tile.GetComponent<MeshRenderer>().material = lightSquareMaterial[shade];
+        else
+            tile.GetComponent<MeshRenderer>().material = darkSquareMaterial[shade];
+
+    }
+
     private void GenerateTiles(int boardWidth, int boardHight)
     {
         board = new GameObject[boardWidth, boardHight];
@@ -32,7 +76,7 @@ public class NewBehaviourScript : MonoBehaviour
     private GameObject GenerateTile(int x, int y)
     {
         GameObject tile = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        tile.name = string.Format("{0}, {1}", x, y);
+        tile.name = string.Format("{0} {1}", x, y);
         tile.transform.parent = transform;
 
         if ((x + y) % 2 == 0)
