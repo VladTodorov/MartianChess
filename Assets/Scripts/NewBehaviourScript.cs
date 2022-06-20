@@ -11,7 +11,7 @@ public class NewBehaviourScript : MonoBehaviour
     public Material[] lightSquareMaterial;
     public Material[] darkSquareMaterial;
     [SerializeField] private Transform cam;
-    private GameObject[,] boardObject;
+    public GameObject[,] boardObject;
 
     public GameObject queenObject;
     public GameObject bishopObject;
@@ -20,49 +20,71 @@ public class NewBehaviourScript : MonoBehaviour
     private readonly int BOARD_LENGTH_X = 4;
     private readonly int BOARD_LENGTH_Y = 8;
 
-    private void Awake()
+    private void Start()
     {
         cam.transform.position = new Vector3((float)BOARD_LENGTH_X/2 - 0.5f, (float)BOARD_LENGTH_Y/2 - 0.5f, -10f);
         GenerateTiles(BOARD_LENGTH_X, BOARD_LENGTH_Y);
         GeneratePieces();
     }
 
+
+    private GameObject selectedPiece;
+    private GameObject selectedPieceMoveTo;
+
     void Update()
     {
+
         //UsingMouse();
 
-        //gets phone touch input and highlights selected tile
-        if (Input.touchCount > 0)
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
-            // Construct a ray from touch coordinates
-            Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-            if (Physics.Raycast(ray, out RaycastHit hit, 50.0f))
+            GameObject touchInput = GetTouch();
+            if (selectedPiece == null || touchInput == null)
             {
-                SetTileMaterial(hit.collider.gameObject, 1);
-
-                if (currHighlightedTile == null)
-                {
-                    currHighlightedTile = hit.collider.gameObject;
-                }
-                else if (currHighlightedTile != hit.collider.gameObject)
-                {
-                    SetTileMaterial(currHighlightedTile, 0);
-                    currHighlightedTile = hit.collider.gameObject;
-                }
+                selectedPiece = touchInput;
+                // add highlight possible moves for piece here
+                // need a getPosition function
             }
-            else
+            else if (touchInput != selectedPiece)
             {
-                if (currHighlightedTile != null)
-                {
-                    SetTileMaterial(currHighlightedTile, 0);
-                }
+                selectedPieceMoveTo = touchInput;
             }
+        }
 
+        if (selectedPiece != null && selectedPieceMoveTo != null)
+        {
+            selectedPiece.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
+            selectedPieceMoveTo.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
+            //Debug.Log(selectedPiece.name + " ---- " + selectedPieceMoveTo.name);
+            Debug.Log(" ====== " + selectedPiece.transform.position);
+            selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
+            //gotta update the board
+            selectedPiece = null;
+            selectedPieceMoveTo = null;
         }
 
 
 
     }
+
+    private GameObject GetTouch()
+    {
+        //gets phone touch input and highlights selected tile
+        
+        // Construct a ray from touch coordinates
+        Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+        if (Physics.Raycast(ray, out RaycastHit hit, 20.0f))
+        {
+            //SetTileMaterial(hit.collider.gameObject, 1);
+            return hit.collider.gameObject;
+        }
+        else
+        {
+            return null;
+        }
+
+    }
+
 
 
     private void GenerateTiles(int boardWidth, int boardHight)
@@ -134,6 +156,8 @@ public class NewBehaviourScript : MonoBehaviour
 
     }
 
+
+    //Helper
     private void SetTileMaterial(GameObject tile, int shade)
     {
         int[] tilePos = tile.name.Split(' ').Take(2).Select(int.Parse).ToArray();
