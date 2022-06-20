@@ -55,17 +55,43 @@ public class NewBehaviourScript : MonoBehaviour
         {
             selectedPiece.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
             selectedPieceMoveTo.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
+            
             //Debug.Log(selectedPiece.name + " ---- " + selectedPieceMoveTo.name);
-            Debug.Log(" ====== " + selectedPiece.transform.position);
+            UpdateBoard(selectedPiece.transform.position, selectedPieceMoveTo.transform.position);
+            
             selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
-            //gotta update the board
+
             selectedPiece = null;
             selectedPieceMoveTo = null;
         }
 
-
-
     }
+
+    private void UpdateBoard(Vector3 from, Vector3 to)
+    {
+        int initialPosLinear = (int)from.y * 4 + (int)from.x;
+        int finalPosLinear = (int)to.y * 4 + (int)to.x;
+        int pieceType = board[initialPosLinear];
+
+        board[initialPosLinear] = 0;
+        board[finalPosLinear] = pieceType;
+
+        Debug.Log(PrintBoard());
+    }
+
+    private string PrintBoard()
+    {
+        string boardString = "";
+        for (int i = 1; i <= board.Length; i++)
+        {
+            if(i%4 ==0)
+                boardString += string.Format("{0}\n", board[i - 1]);
+            else
+                boardString += string.Format("{0} ", board[i-1]);
+        }
+        return boardString;
+    }
+
 
     private GameObject GetTouch()
     {
