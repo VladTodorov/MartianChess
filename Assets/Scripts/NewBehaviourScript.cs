@@ -75,50 +75,20 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void UpdateBoard(Vector3 from, Vector3 to)
     {
-        int initialPosLinear = (int)from.y * 4 + (int)from.x;
-        int finalPosLinear = (int)to.y * 4 + (int)to.x;
-        int pieceType = board[initialPosLinear];
+        int initialPosOneD = VectorToOneD(from);
+        int finalPosOneD = VectorToOneD(to);
+        int pieceType = board[initialPosOneD];
 
-        board[initialPosLinear] = 0;
-        board[finalPosLinear] = pieceType;
+        board[initialPosOneD] = 0;
+        board[finalPosOneD] = pieceType;
 
         Debug.Log(PrintBoard());
     }
 
-    private string PrintBoard()
-    {
-        string boardString = "";
-        for (int i = 1; i <= board.Length; i++)
-        {
-            if(i%4 ==0)
-                boardString += string.Format("{0}\n", board[i - 1]);
-            else
-                boardString += string.Format("{0} ", board[i-1]);
-        }
-        return boardString;
-    }
-
-
-    private GameObject GetTouch()
-    {
-        //gets phone touch input and highlights selected tile
-        
-        // Construct a ray from touch coordinates
-        Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-        if (Physics.Raycast(ray, out RaycastHit hit, 20.0f))
-        {
-            //SetTileMaterial(hit.collider.gameObject, 1);
-            return hit.collider.gameObject;
-        }
-        else
-        {
-            return null;
-        }
-
-    }
 
 
 
+    //Init
     private void GenerateTiles(int boardWidth, int boardHight)
     {
         boardObject = new GameObject[boardWidth, boardHight];
@@ -203,7 +173,43 @@ public class NewBehaviourScript : MonoBehaviour
 
     }
 
+    private GameObject GetTouch()
+    {
+        //gets phone touch input and highlights selected tile
 
+        // Construct a ray from touch coordinates
+        Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+        if (Physics.Raycast(ray, out RaycastHit hit, 20.0f))
+        {
+            //SetTileMaterial(hit.collider.gameObject, 1);
+            return hit.collider.gameObject;
+        }
+        else
+        {
+            return null;
+        }
+
+    }
+
+    private int VectorToOneD(Vector3 vect)
+    {
+        return (int)vect.y * 4 + (int)vect.x;
+    }
+
+
+    //Debug
+    private string PrintBoard()
+    {
+        string boardString = "";
+        for (int i = 1; i <= board.Length; i++)
+        {
+            if (i % 4 == 0)
+                boardString += string.Format("{0}\n", board[i - 1]);
+            else
+                boardString += string.Format("{0} ", board[i - 1]);
+        }
+        return boardString;
+    }
 
 
 
