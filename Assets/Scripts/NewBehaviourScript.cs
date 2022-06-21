@@ -39,24 +39,30 @@ public class NewBehaviourScript : MonoBehaviour
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
             GameObject touchInput = GetTouch();
-            if (selectedPiece == null || touchInput == null)
+            if (touchInput == null)
+            {
+                selectedPiece = null;
+            }
+            else if (selectedPiece == null && touchInput.CompareTag("Piece"))
             {
                 selectedPiece = touchInput;
+
                 // add highlight possible moves for piece here
                 // need a getPosition function
             }
-            else if (touchInput != selectedPiece)
+            else if (touchInput != selectedPiece && selectedPiece != null)
             {
                 selectedPieceMoveTo = touchInput;
+                Debug.Log(selectedPiece.name + " ==== ");
             }
         }
 
         if (selectedPiece != null && selectedPieceMoveTo != null)
         {
             selectedPiece.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
-            selectedPieceMoveTo.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
+            //selectedPieceMoveTo.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
             
-            //Debug.Log(selectedPiece.name + " ---- " + selectedPieceMoveTo.name);
+            Debug.Log(selectedPiece.name + " ---- " + selectedPieceMoveTo.name);
             UpdateBoard(selectedPiece.transform.position, selectedPieceMoveTo.transform.position);
             
             selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
@@ -166,19 +172,21 @@ public class NewBehaviourScript : MonoBehaviour
         int x = pos % BOARD_LENGTH_X;
         int y = pos / BOARD_LENGTH_X;
 
+        GameObject piece;
         
-
         if (type == 1)
         {
-            Instantiate(pawnObject, new Vector3(x, y, -1), Quaternion.identity);
+            piece = Instantiate(pawnObject, new Vector3(x, y, -1), Quaternion.identity);
+            piece.tag = "Piece";
         } else if (type == 2)
         {
-            Instantiate(bishopObject, new Vector3(x, y, -1), Quaternion.identity);
+            piece = Instantiate(bishopObject, new Vector3(x, y, -1), Quaternion.identity);
+            piece.tag = "Piece";
         } else if (type == 3)
         {
-            Instantiate(queenObject, new Vector3(x, y, -1), Quaternion.identity);
+            piece = Instantiate(queenObject, new Vector3(x, y, -1), Quaternion.identity);
+            piece.tag = "Piece";
         }
-
 
     }
 
