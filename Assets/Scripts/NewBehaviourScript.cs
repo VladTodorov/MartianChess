@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-
+using System;
 
 public class NewBehaviourScript : MonoBehaviour
 {
     private int[] board;
+    private int[][] tilesToEdge;
 
     public Material[] lightSquareMaterial;
     public Material[] darkSquareMaterial;
@@ -25,6 +26,7 @@ public class NewBehaviourScript : MonoBehaviour
         cam.transform.position = new Vector3((float)BOARD_LENGTH_X/2 - 0.5f, (float)BOARD_LENGTH_Y/2 - 0.5f, -10f);
         GenerateTiles(BOARD_LENGTH_X, BOARD_LENGTH_Y);
         GeneratePieces();
+        PopulateTilesToEdge();
     }
 
 
@@ -160,6 +162,34 @@ public class NewBehaviourScript : MonoBehaviour
 
     }
 
+    private void PopulateTilesToEdge()
+    {
+        for (int x = 0; x < BOARD_LENGTH_X; ++x)
+        {
+            for (int y = 0; y < BOARD_LENGTH_Y; ++y)
+            {
+                int tilesUp = BOARD_LENGTH_Y - y;
+                int tilesDown = y;
+                int tilesLeft = x;
+                int tilesRight = BOARD_LENGTH_X - x;
+
+                int boardIndex = y * BOARD_LENGTH_X + x;
+
+                tilesToEdge[boardIndex] = new int[] {
+                    tilesUp,
+                    tilesDown,
+                    tilesLeft,
+                    tilesRight,
+                    Math.Min(tilesUp, tilesLeft),
+                    Math.Min(tilesUp, tilesRight),
+                    Math.Min(tilesDown, tilesLeft),
+                    Math.Min(tilesDown, tilesRight),
+                };
+            }
+        }
+    }
+
+
 
     //Helper
     private void SetTileMaterial(GameObject tile, int shade)
@@ -193,7 +223,7 @@ public class NewBehaviourScript : MonoBehaviour
 
     private int VectorToOneD(Vector3 vect)
     {
-        return (int)vect.y * 4 + (int)vect.x;
+        return (int)vect.y * BOARD_LENGTH_X + (int)vect.x;
     }
 
 
