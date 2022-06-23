@@ -6,8 +6,12 @@ using System;
 
 public class NewBehaviourScript : MonoBehaviour
 {
+    private static readonly int BOARD_LENGTH_X = 4;
+    private static readonly int BOARD_LENGTH_Y = 8;
+
     private int[] board;
-    private int[][] tilesToEdge;
+    private static int[][] tilesToEdge;
+    private static readonly int[] directionOffset = new int[] { BOARD_LENGTH_X, -BOARD_LENGTH_X, -1, 1, BOARD_LENGTH_X - 1, BOARD_LENGTH_X + 1, -BOARD_LENGTH_X + 1, -BOARD_LENGTH_X - 1 };
 
     public Material[] lightSquareMaterial;
     public Material[] darkSquareMaterial;
@@ -17,9 +21,6 @@ public class NewBehaviourScript : MonoBehaviour
     public GameObject queenObject;
     public GameObject bishopObject;
     public GameObject pawnObject;
-
-    private readonly int BOARD_LENGTH_X = 4;
-    private readonly int BOARD_LENGTH_Y = 8;
 
     private void Start()
     {
@@ -44,13 +45,14 @@ public class NewBehaviourScript : MonoBehaviour
             if (touchInput == null)
             {
                 selectedPiece = null;
+                //add remove HighlightLegalMoves
             }
             else if (selectedPiece == null && touchInput.CompareTag("Piece"))
             {
                 selectedPiece = touchInput;
 
-                // add highlight possible moves for piece here
-                // need a getPosition function
+                HighlightLegalMoves(selectedPiece);
+
             }
             else if (touchInput != selectedPiece && selectedPiece != null)
             {
@@ -73,6 +75,59 @@ public class NewBehaviourScript : MonoBehaviour
             selectedPieceMoveTo = null;
         }
 
+    }
+
+    private void HighlightLegalMoves(GameObject piece)
+    {
+        int boardPos = VectorToOneD(piece.transform.position);
+
+        List<int> legalMoves = GetLegalMoves(boardPos);
+
+        foreach (int t in legalMoves)
+        {
+            //add layermask to tiles/pieces
+            Vector3 origin, direction;
+            origin = OneDToVector(t);
+            direction = new Vector3(0, 0, -1);
+            origin.z = 1;
+
+            //Debug.Log(origin);
+            //Debug.Log(direction);
+
+            int tileBitmask = 1 << 6;
+
+            Physics.Raycast(origin, direction, out RaycastHit hit, 2.0f, tileBitmask);
+            Debug.DrawRay(origin, direction, Color.yellow, 15, false);
+
+            //Debug.Log(hit.collider.gameObject.name);
+
+            SetTileMaterial(hit.collider.gameObject, 1);
+        }
+
+    }
+
+    private List<int> GetLegalMoves(int boardPos)
+    {
+        int type = board[boardPos];
+
+        //change to list?
+        List<int> legalMoves = new();
+
+        if (type == 1)
+        {
+            for (int i = 4; i < directionOffset.Length; i++)
+            {
+                if (tilesToEdge[boardPos][i] > 0)
+                {                                                                        ///check what side if board
+                    if (board[boardPos + directionOffset[i]] == 0 || boardPos + directionOffset[i] > BOARD_LENGTH_Y / 2 * BOARD_LENGTH_X)
+                    {
+                        legalMoves.Add(boardPos + directionOffset[i]);
+                    }
+                }
+            }
+        }
+
+        return legalMoves;
     }
 
     private void UpdateBoard(Vector3 from, Vector3 to)
@@ -106,6 +161,7 @@ public class NewBehaviourScript : MonoBehaviour
         GameObject tile = GameObject.CreatePrimitive(PrimitiveType.Quad);
         tile.name = string.Format("{0} {1}", x, y);
         tile.transform.parent = transform;
+        tile.layer = LayerMask.NameToLayer("Tiles");
 
         SetTileMaterial(tile, 0);
 
@@ -133,10 +189,7 @@ public class NewBehaviourScript : MonoBehaviour
 
 
         for (int i = 0; i < board.Length; i++)
-        {
-            GeneratePiece(board[i], i);
-        }
-        
+            GeneratePiece(board[i], i);        
     }
 
     private void GeneratePiece(int type, int pos)
@@ -150,20 +203,26 @@ public class NewBehaviourScript : MonoBehaviour
         {
             piece = Instantiate(pawnObject, new Vector3(x, y, -1), Quaternion.identity);
             piece.tag = "Piece";
-        } else if (type == 2)
+            piece.layer = LayerMask.NameToLayer("Pieces");
+        }
+        else if (type == 2)
         {
             piece = Instantiate(bishopObject, new Vector3(x, y, -1), Quaternion.identity);
             piece.tag = "Piece";
-        } else if (type == 3)
+            piece.layer = LayerMask.NameToLayer("Pieces");
+        }
+        else if (type == 3)
         {
             piece = Instantiate(queenObject, new Vector3(x, y, -1), Quaternion.identity);
             piece.tag = "Piece";
+            piece.layer = LayerMask.NameToLayer("Pieces");
         }
 
     }
 
-    private void PopulateTilesToEdge()
+    private static void PopulateTilesToEdge()
     {
+        tilesToEdge = new int[32][];
         for (int x = 0; x < BOARD_LENGTH_X; ++x)
         {
             for (int y = 0; y < BOARD_LENGTH_Y; ++y)
@@ -226,6 +285,12 @@ public class NewBehaviourScript : MonoBehaviour
         return (int)vect.y * BOARD_LENGTH_X + (int)vect.x;
     }
 
+    private Vector3 OneDToVector(int t)
+    {
+        Vector3 result = new (t % BOARD_LENGTH_X, t / BOARD_LENGTH_X, 0);
+        return result;
+    }
+
 
     //Debug
     private string PrintBoard()
@@ -247,13 +312,11 @@ public class NewBehaviourScript : MonoBehaviour
     private void UsingMouse()
     {
         Ray ray;
-        RaycastHit hit;
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out hit, 50.0f))
+        if (Physics.Raycast(ray, out RaycastHit hit, 50.0f))
         {
             SetTileMaterial(hit.collider.gameObject, 1);
-
             if (currHighlightedTile == null)
             {
                 currHighlightedTile = hit.collider.gameObject;
