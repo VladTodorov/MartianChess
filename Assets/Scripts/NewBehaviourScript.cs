@@ -34,6 +34,7 @@ public class NewBehaviourScript : MonoBehaviour
 
     private GameObject selectedPiece;
     private GameObject selectedPieceMoveTo;
+    List<int> legalMoves = null;
 
     void Update()
     {
@@ -42,32 +43,37 @@ public class NewBehaviourScript : MonoBehaviour
 
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
+            if (selectedPiece != null)
+                HighlightLegalMoves(selectedPiece, 0);
+
             GameObject touchInput = GetTouch();
             if (touchInput == null)
             {
                 selectedPiece = null;
-                //add remove HighlightLegalMoves
             }
             else if (selectedPiece == null && touchInput.CompareTag("Piece"))
             {
                 selectedPiece = touchInput;
 
-                HighlightLegalMoves(selectedPiece);
-
+                legalMoves = HighlightLegalMoves(selectedPiece, 1);
             }
             else if (touchInput != selectedPiece && selectedPiece != null)
             {
-                selectedPieceMoveTo = touchInput;
-                //Debug.Log(selectedPiece.name + " ==== ");
+                if(IsLegalMove(touchInput, legalMoves))
+                    selectedPieceMoveTo = touchInput;
+                else
+                    selectedPiece = null;
+
+                legalMoves = null;
             }
         }
 
         if (selectedPiece != null && selectedPieceMoveTo != null)
         {
-            selectedPiece.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
+            //selectedPiece.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
             //selectedPieceMoveTo.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
+            //Debug.Log(selectedPiece.name + " ---- " + selectedPieceMoveTo.name);
             
-            Debug.Log(selectedPiece.name + " ---- " + selectedPieceMoveTo.name);
             UpdateBoard(selectedPiece.transform.position, selectedPieceMoveTo.transform.position);
             
             selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
@@ -78,7 +84,8 @@ public class NewBehaviourScript : MonoBehaviour
 
     }
 
-    private void HighlightLegalMoves(GameObject piece)
+
+    private List<int> HighlightLegalMoves(GameObject piece, int shade)
     {
         int boardPos = VectorToOneD(piece.transform.position);
 
@@ -102,8 +109,9 @@ public class NewBehaviourScript : MonoBehaviour
 
             //Debug.Log(hit.collider.gameObject.name);
 
-            SetTileMaterial(hit.collider.gameObject, 1);
+            SetTileMaterial(hit.collider.gameObject, shade);
         }
+        return legalMoves;
 
     }
 
@@ -136,6 +144,16 @@ public class NewBehaviourScript : MonoBehaviour
         }
 
         return legalMoves;
+    }
+
+    private bool IsLegalMove(GameObject touchInput, List<int> legalMoves)
+    {
+        int pos = VectorToOneD(touchInput.transform.position);   
+        foreach (int t in legalMoves)
+            if (t == pos)
+                return true;
+
+        return false;
     }
 
     private void UpdateBoard(Vector3 from, Vector3 to)
