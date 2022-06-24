@@ -8,6 +8,7 @@ public class NewBehaviourScript : MonoBehaviour
 {
     private static readonly int BOARD_LENGTH_X = 4;
     private static readonly int BOARD_LENGTH_Y = 8;
+    private static readonly int MID_OF_BOARD = BOARD_LENGTH_Y / 2 * BOARD_LENGTH_X;
 
     private int[] board;
     private static int[][] tilesToEdge;
@@ -57,7 +58,7 @@ public class NewBehaviourScript : MonoBehaviour
             else if (touchInput != selectedPiece && selectedPiece != null)
             {
                 selectedPieceMoveTo = touchInput;
-                Debug.Log(selectedPiece.name + " ==== ");
+                //Debug.Log(selectedPiece.name + " ==== ");
             }
         }
 
@@ -110,7 +111,6 @@ public class NewBehaviourScript : MonoBehaviour
     {
         int type = board[boardPos];
 
-        //change to list?
         List<int> legalMoves = new();
 
         if (type == 1)
@@ -118,8 +118,16 @@ public class NewBehaviourScript : MonoBehaviour
             for (int i = 4; i < directionOffset.Length; i++)
             {
                 if (tilesToEdge[boardPos][i] > 0)
-                {                                                                        ///check what side if board
-                    if (board[boardPos + directionOffset[i]] == 0 || boardPos + directionOffset[i] > BOARD_LENGTH_Y / 2 * BOARD_LENGTH_X)
+                {
+                    if (board[boardPos + directionOffset[i]] == 0)
+                    {
+                        legalMoves.Add(boardPos + directionOffset[i]);
+                    }
+                    else if (boardPos < MID_OF_BOARD && boardPos + directionOffset[i] > MID_OF_BOARD)
+                    {
+                        legalMoves.Add(boardPos + directionOffset[i]);
+                    }
+                    else if (boardPos > MID_OF_BOARD && boardPos + directionOffset[i] < MID_OF_BOARD)
                     {
                         legalMoves.Add(boardPos + directionOffset[i]);
                     }
