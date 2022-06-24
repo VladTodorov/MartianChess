@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7074815957371185653}
   - component: {fileID: 1170146656376667133}
   - component: {fileID: 4041573922799343783}
-  - component: {fileID: 2898669988022930646}
+  - component: {fileID: -3939944643385058534}
   m_Layer: 0
   m_Name: pawn
   m_TagString: Untagged
@@ -84,8 +84,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &2898669988022930646
-CapsuleCollider:
+--- !u!65 &-3939944643385058534
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -94,7 +94,6 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}

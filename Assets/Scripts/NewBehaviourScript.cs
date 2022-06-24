@@ -295,7 +295,7 @@ public class NewBehaviourScript : MonoBehaviour
                 };
             }
         }
-
+        /*
         string boardString = "";
         for (int n = 0; n < tilesToEdge.Length; n++)
         {
@@ -307,6 +307,7 @@ public class NewBehaviourScript : MonoBehaviour
             boardString += string.Format("\n");
         }
         Debug.Log(boardString);
+        */
     }
 
 
@@ -320,31 +321,20 @@ public class NewBehaviourScript : MonoBehaviour
             tile.GetComponent<MeshRenderer>().material = lightSquareMaterial[shade];
         else
             tile.GetComponent<MeshRenderer>().material = darkSquareMaterial[shade];
-
     }
 
     private GameObject GetTouch()
     {
-        //gets phone touch input and highlights selected tile
-
         // Construct a ray from touch coordinates
         Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+
         if (Physics.Raycast(ray, out RaycastHit hit, 20.0f))
-        {
-            //SetTileMaterial(hit.collider.gameObject, 1);
             return hit.collider.gameObject;
-        }
         else
-        {
             return null;
-        }
-
     }
 
-    private int VectorToOneD(Vector3 vect)
-    {
-        return (int)vect.y * BOARD_LENGTH_X + (int)vect.x;
-    }
+    private int VectorToOneD(Vector3 vect) => (int)vect.y * BOARD_LENGTH_X + (int)vect.x;
 
     private Vector3 OneDToVector(int t)
     {
