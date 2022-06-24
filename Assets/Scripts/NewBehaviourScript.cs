@@ -12,7 +12,7 @@ public class NewBehaviourScript : MonoBehaviour
 
     private int[] board;
     private static int[][] tilesToEdge;
-    private static readonly int[] directionOffset = new int[] { BOARD_LENGTH_X, -BOARD_LENGTH_X, -1, 1, BOARD_LENGTH_X - 1, BOARD_LENGTH_X + 1, -BOARD_LENGTH_X + 1, -BOARD_LENGTH_X - 1 };
+    private static readonly int[] directionOffset = new int[] { BOARD_LENGTH_X, -BOARD_LENGTH_X, -1, 1, BOARD_LENGTH_X - 1, BOARD_LENGTH_X + 1, -BOARD_LENGTH_X - 1, -BOARD_LENGTH_X + 1 };
 
     public Material[] lightSquareMaterial;
     public Material[] darkSquareMaterial;
@@ -142,6 +142,29 @@ public class NewBehaviourScript : MonoBehaviour
                 }
             }
         }
+        else if (type == 2)
+        {
+            for (int i = 4; i < directionOffset.Length; i++)
+            {
+                int pos = boardPos;
+                while (tilesToEdge[pos][i] > 0)
+                {
+                    if (board[pos + directionOffset[i]] == 0)
+                    {
+                        legalMoves.Add(pos + directionOffset[i]);
+                    }
+                    else if (pos < MID_OF_BOARD && pos + directionOffset[i] > MID_OF_BOARD)
+                    {
+                        legalMoves.Add(pos + directionOffset[i]);
+                    }
+                    else if (pos > MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
+                    {
+                        legalMoves.Add(pos + directionOffset[i]);
+                    }
+                    pos += directionOffset[i];
+                }
+            }
+        }
 
         return legalMoves;
     }
@@ -253,10 +276,10 @@ public class NewBehaviourScript : MonoBehaviour
         {
             for (int y = 0; y < BOARD_LENGTH_Y; ++y)
             {
-                int tilesUp = BOARD_LENGTH_Y - y;
+                int tilesUp = BOARD_LENGTH_Y - 1 - y;
                 int tilesDown = y;
                 int tilesLeft = x;
-                int tilesRight = BOARD_LENGTH_X - x;
+                int tilesRight = BOARD_LENGTH_X - 1 - x;
 
                 int boardIndex = y * BOARD_LENGTH_X + x;
 
@@ -272,6 +295,18 @@ public class NewBehaviourScript : MonoBehaviour
                 };
             }
         }
+
+        string boardString = "";
+        for (int n = 0; n < tilesToEdge.Length; n++)
+        {
+            boardString += string.Format("Row({0}): ", n);
+            for (int k = 0; k < tilesToEdge[n].Length; k++)
+            {
+                boardString += string.Format("{0} ", tilesToEdge[n][k]);
+            }
+            boardString += string.Format("\n");
+        }
+        Debug.Log(boardString);
     }
 
 
