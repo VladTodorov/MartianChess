@@ -165,6 +165,29 @@ public class NewBehaviourScript : MonoBehaviour
                 }
             }
         }
+        else if (type == 3)
+        {
+            for (int i = 0; i < directionOffset.Length; i++)
+            {
+                int pos = boardPos;
+                while (tilesToEdge[pos][i] > 0)
+                {
+                    if (board[pos + directionOffset[i]] == 0)
+                    {
+                        legalMoves.Add(pos + directionOffset[i]);
+                    }
+                    else if (pos < MID_OF_BOARD && pos + directionOffset[i] > MID_OF_BOARD)
+                    {
+                        legalMoves.Add(pos + directionOffset[i]);
+                    }
+                    else if (pos > MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
+                    {
+                        legalMoves.Add(pos + directionOffset[i]);
+                    }
+                    pos += directionOffset[i];
+                }
+            }
+        }
 
         return legalMoves;
     }
