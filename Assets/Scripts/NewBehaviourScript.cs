@@ -144,7 +144,7 @@ public class NewBehaviourScript : MonoBehaviour
         }
         else if (type == 2)
         {
-            for (int i = 4; i < directionOffset.Length; i++)
+            for (int i = 4; i < directionOffset.Length; ++i)
             {
                 int pos = boardPos;
                 while (tilesToEdge[pos][i] > 0)
@@ -156,18 +156,21 @@ public class NewBehaviourScript : MonoBehaviour
                     else if (pos < MID_OF_BOARD && pos + directionOffset[i] > MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
+                        break;
                     }
                     else if (pos > MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
+                        break;
                     }
+                    else break;
                     pos += directionOffset[i];
                 }
             }
         }
         else if (type == 3)
         {
-            for (int i = 0; i < directionOffset.Length; i++)
+            for (int i = 0; i < directionOffset.Length; ++i)
             {
                 int pos = boardPos;
                 while (tilesToEdge[pos][i] > 0)
@@ -179,11 +182,14 @@ public class NewBehaviourScript : MonoBehaviour
                     else if (pos < MID_OF_BOARD && pos + directionOffset[i] > MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
+                        break;
                     }
                     else if (pos > MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
+                        break;
                     }
+                    else break;
                     pos += directionOffset[i];
                 }
             }
