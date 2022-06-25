@@ -6,29 +6,26 @@ using System;
 
 public class NewBehaviourScript : MonoBehaviour
 {
-    private static readonly int BOARD_LENGTH_X = 4;
-    private static readonly int BOARD_LENGTH_Y = 8;
-    private static readonly int MID_OF_BOARD = BOARD_LENGTH_Y / 2 * BOARD_LENGTH_X;
+    public Board board;
 
-    private int[] board;
-    private static int[][] tilesToEdge;
-    private static readonly int[] directionOffset = new int[] { BOARD_LENGTH_X, -BOARD_LENGTH_X, -1, 1, BOARD_LENGTH_X - 1, BOARD_LENGTH_X + 1, -BOARD_LENGTH_X - 1, -BOARD_LENGTH_X + 1 };
-
+    [Header("Materials")]
     public Material[] lightSquareMaterial;
     public Material[] darkSquareMaterial;
-    [SerializeField] private Transform cam;
-    public GameObject[,] boardObject;
 
+    [Header("Prefabs")]
     public GameObject queenObject;
     public GameObject bishopObject;
     public GameObject pawnObject;
 
+    [SerializeField] private Transform cam;
+    public GameObject[,] boardObject;
+
     private void Start()
     {
-        cam.transform.position = new Vector3((float)BOARD_LENGTH_X/2 - 0.5f, (float)BOARD_LENGTH_Y/2 - 0.5f, -10f);
-        GenerateTiles(BOARD_LENGTH_X, BOARD_LENGTH_Y);
+        board = new Board();
+        cam.transform.position = new Vector3((float)Board.LENGTH_X / 2 - 0.5f, (float)Board.LENGTH_Y / 2 - 0.5f, -10f);
+        GenerateTiles(Board.LENGTH_X, Board.LENGTH_Y);
         GeneratePieces();
-        PopulateTilesToEdge();
     }
 
 
@@ -47,7 +44,7 @@ public class NewBehaviourScript : MonoBehaviour
                 HighlightLegalMoves(selectedPiece, 0);
 
             GameObject touchInput = GetTouch();
-            if (touchInput == null)
+            if (touchInput == null || touchInput == selectedPiece)
             {
                 selectedPiece = null;
             }
@@ -57,7 +54,7 @@ public class NewBehaviourScript : MonoBehaviour
 
                 legalMoves = HighlightLegalMoves(selectedPiece, 1);
             }
-            else if (touchInput != selectedPiece && selectedPiece != null)
+            else if (selectedPiece != null)
             {
                 if(IsLegalMove(touchInput, legalMoves))
                     selectedPieceMoveTo = touchInput;
@@ -70,12 +67,7 @@ public class NewBehaviourScript : MonoBehaviour
 
         if (selectedPiece != null && selectedPieceMoveTo != null)
         {
-            //selectedPiece.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
-            //selectedPieceMoveTo.GetComponent<MeshRenderer>().material = darkSquareMaterial[0];
-            //Debug.Log(selectedPiece.name + " ---- " + selectedPieceMoveTo.name);
-            
-            UpdateBoard(selectedPiece.transform.position, selectedPieceMoveTo.transform.position);
-            
+            board.MakeMove(VectorToOneD(selectedPiece.transform.position), VectorToOneD(selectedPieceMoveTo.transform.position));
             selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
 
             selectedPiece = null;
@@ -89,7 +81,7 @@ public class NewBehaviourScript : MonoBehaviour
     {
         int boardPos = VectorToOneD(piece.transform.position);
 
-        List<int> legalMoves = GetLegalMoves(boardPos);
+        List<int> legalMoves = board.GetLegalMoves(boardPos);
 
         foreach (int t in legalMoves)
         {
@@ -115,89 +107,7 @@ public class NewBehaviourScript : MonoBehaviour
 
     }
 
-    private List<int> GetLegalMoves(int boardPos)
-    {
-        int type = board[boardPos];
-
-        List<int> legalMoves = new();
-
-        if (type == 1)
-        {
-            for (int i = 4; i < directionOffset.Length; i++)
-            {
-                if (tilesToEdge[boardPos][i] > 0)
-                {
-                    if (board[boardPos + directionOffset[i]] == 0)
-                    {
-                        legalMoves.Add(boardPos + directionOffset[i]);
-                    }
-                    else if (boardPos < MID_OF_BOARD && boardPos + directionOffset[i] > MID_OF_BOARD)
-                    {
-                        legalMoves.Add(boardPos + directionOffset[i]);
-                    }
-                    else if (boardPos > MID_OF_BOARD && boardPos + directionOffset[i] < MID_OF_BOARD)
-                    {
-                        legalMoves.Add(boardPos + directionOffset[i]);
-                    }
-                }
-            }
-        }
-        else if (type == 2)
-        {
-            for (int i = 4; i < directionOffset.Length; ++i)
-            {
-                int pos = boardPos;
-                while (tilesToEdge[pos][i] > 0)
-                {
-                    if (board[pos + directionOffset[i]] == 0)
-                    {
-                        legalMoves.Add(pos + directionOffset[i]);
-                    }
-                    else if (pos < MID_OF_BOARD && pos + directionOffset[i] > MID_OF_BOARD)
-                    {
-                        legalMoves.Add(pos + directionOffset[i]);
-                        break;
-                    }
-                    else if (pos > MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
-                    {
-                        legalMoves.Add(pos + directionOffset[i]);
-                        break;
-                    }
-                    else break;
-                    pos += directionOffset[i];
-                }
-            }
-        }
-        else if (type == 3)
-        {
-            for (int i = 0; i < directionOffset.Length; ++i)
-            {
-                int pos = boardPos;
-                while (tilesToEdge[pos][i] > 0)
-                {
-                    if (board[pos + directionOffset[i]] == 0)
-                    {
-                        legalMoves.Add(pos + directionOffset[i]);
-                    }
-                    else if (pos < MID_OF_BOARD && pos + directionOffset[i] > MID_OF_BOARD)
-                    {
-                        legalMoves.Add(pos + directionOffset[i]);
-                        break;
-                    }
-                    else if (pos > MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
-                    {
-                        legalMoves.Add(pos + directionOffset[i]);
-                        break;
-                    }
-                    else break;
-                    pos += directionOffset[i];
-                }
-            }
-        }
-
-        return legalMoves;
-    }
-
+    //move this to Board
     private bool IsLegalMove(GameObject touchInput, List<int> legalMoves)
     {
         int pos = VectorToOneD(touchInput.transform.position);   
@@ -208,17 +118,6 @@ public class NewBehaviourScript : MonoBehaviour
         return false;
     }
 
-    private void UpdateBoard(Vector3 from, Vector3 to)
-    {
-        int initialPosOneD = VectorToOneD(from);
-        int finalPosOneD = VectorToOneD(to);
-        int pieceType = board[initialPosOneD];
-
-        board[initialPosOneD] = 0;
-        board[finalPosOneD] = pieceType;
-
-        Debug.Log(PrintBoard());
-    }
 
 
 
@@ -252,28 +151,14 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void GeneratePieces()
     {
-        board = new int[]
-        {
-            3, 3, 2, 0,
-            3, 2, 1, 0,
-            2, 1, 1, 0,
-            0, 0, 0, 0,
-
-            0, 0, 0, 0,
-            0, 1, 1, 2,
-            0, 1, 2, 3,
-            0, 2, 3, 3,
-        };
-
-
-        for (int i = 0; i < board.Length; i++)
-            GeneratePiece(board[i], i);        
+        for (int i = 0; i < Board.LENGTH; i++)
+            GeneratePiece(board.Get(i), i);        
     }
 
     private void GeneratePiece(int type, int pos)
     {
-        int x = pos % BOARD_LENGTH_X;
-        int y = pos / BOARD_LENGTH_X;
+        int x = pos % Board.LENGTH_X;
+        int y = pos / Board.LENGTH_X;
 
         GameObject piece;
         
@@ -298,48 +183,6 @@ public class NewBehaviourScript : MonoBehaviour
 
     }
 
-    private static void PopulateTilesToEdge()
-    {
-        tilesToEdge = new int[32][];
-        for (int x = 0; x < BOARD_LENGTH_X; ++x)
-        {
-            for (int y = 0; y < BOARD_LENGTH_Y; ++y)
-            {
-                int tilesUp = BOARD_LENGTH_Y - 1 - y;
-                int tilesDown = y;
-                int tilesLeft = x;
-                int tilesRight = BOARD_LENGTH_X - 1 - x;
-
-                int boardIndex = y * BOARD_LENGTH_X + x;
-
-                tilesToEdge[boardIndex] = new int[] {
-                    tilesUp,
-                    tilesDown,
-                    tilesLeft,
-                    tilesRight,
-                    Math.Min(tilesUp, tilesLeft),
-                    Math.Min(tilesUp, tilesRight),
-                    Math.Min(tilesDown, tilesLeft),
-                    Math.Min(tilesDown, tilesRight),
-                };
-            }
-        }
-        /*
-        string boardString = "";
-        for (int n = 0; n < tilesToEdge.Length; n++)
-        {
-            boardString += string.Format("Row({0}): ", n);
-            for (int k = 0; k < tilesToEdge[n].Length; k++)
-            {
-                boardString += string.Format("{0} ", tilesToEdge[n][k]);
-            }
-            boardString += string.Format("\n");
-        }
-        Debug.Log(boardString);
-        */
-    }
-
-
 
     //Helper
     private void SetTileMaterial(GameObject tile, int shade)
@@ -363,30 +206,10 @@ public class NewBehaviourScript : MonoBehaviour
             return null;
     }
 
-    private int VectorToOneD(Vector3 vect) => (int)vect.y * BOARD_LENGTH_X + (int)vect.x;
+    private int VectorToOneD(Vector3 vect) => (int)vect.y * Board.LENGTH_X + (int)vect.x;
 
-    private Vector3 OneDToVector(int t)
-    {
-        Vector3 result = new (t % BOARD_LENGTH_X, t / BOARD_LENGTH_X, 0);
-        return result;
-    }
-
-
-    //Debug
-    private string PrintBoard()
-    {
-        string boardString = "";
-        for (int i = 1; i <= board.Length; i++)
-        {
-            if (i % 4 == 0)
-                boardString += string.Format("{0}\n", board[i - 1]);
-            else
-                boardString += string.Format("{0} ", board[i - 1]);
-        }
-        return boardString;
-    }
-
-
+    private Vector3 OneDToVector(int t) => new(t % Board.LENGTH_X, t / Board.LENGTH_X, 0);
+   
 
     private GameObject currHighlightedTile;
     private void UsingMouse()
