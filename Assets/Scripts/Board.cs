@@ -71,18 +71,19 @@ public class Board
             for (int i = 4; i < directionOffset.Length; ++i)
             {
                 int pos = boardPos;
+                int startPos = boardPos;
                 while (tilesToEdge[pos][i] > 0)
                 {
                     if (board[pos + directionOffset[i]] == 0)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                     }
-                    else if (pos < MID_OF_BOARD && pos + directionOffset[i] > MID_OF_BOARD)
+                    else if (startPos < MID_OF_BOARD && pos + directionOffset[i] > MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                         break;
                     }
-                    else if (pos > MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
+                    else if (startPos > MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                         break;
@@ -97,18 +98,19 @@ public class Board
             for (int i = 0; i < directionOffset.Length; ++i)
             {
                 int pos = boardPos;
+                int startPos = boardPos;
                 while (tilesToEdge[pos][i] > 0)
                 {
                     if (board[pos + directionOffset[i]] == 0)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                     }
-                    else if (pos < MID_OF_BOARD && pos + directionOffset[i] > MID_OF_BOARD)
+                    else if (startPos < MID_OF_BOARD && pos + directionOffset[i] > MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                         break;
                     }
-                    else if (pos > MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
+                    else if (startPos > MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                         break;
