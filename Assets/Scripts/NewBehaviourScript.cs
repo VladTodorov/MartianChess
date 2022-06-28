@@ -69,13 +69,27 @@ public class NewBehaviourScript : MonoBehaviour
 
         if (selectedPiece != null && selectedPieceMoveTo != null)
         {
-            board.MakeMove(VectorToOneD(selectedPiece.transform.position), VectorToOneD(selectedPieceMoveTo.transform.position));
-            selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
+            MakeMove(selectedPiece, selectedPieceMoveTo);
+            //selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
 
             selectedPiece = null;
             selectedPieceMoveTo = null;
 
             playerOneTurn = !playerOneTurn;
+        }
+
+    }
+
+    private void MakeMove(GameObject selectedPiece, GameObject selectedPieceMoveTo)
+    {
+        board.MakeMove(VectorToOneD(selectedPiece.transform.position), VectorToOneD(selectedPieceMoveTo.transform.position));
+
+        selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
+
+        if (selectedPieceMoveTo.CompareTag("Piece"))
+        {
+            selectedPieceMoveTo.transform.position = new Vector3(0, 8, -1);
+            selectedPieceMoveTo.transform.localScale = selectedPieceMoveTo.transform.localScale/1.7f;
         }
 
     }
@@ -86,7 +100,7 @@ public class NewBehaviourScript : MonoBehaviour
 
         int pieceIndex = VectorToOneD(touchInput.transform.position);
 
-        if ((playerOneTurn && pieceIndex < Board.MID_OF_BOARD) || (!playerOneTurn && pieceIndex >= Board.MID_OF_BOARD))
+        if((playerOneTurn && pieceIndex < Board.MID_OF_BOARD) || (!playerOneTurn && pieceIndex >= Board.MID_OF_BOARD))
             return true;
         else return false;
     }
