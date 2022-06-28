@@ -7,6 +7,7 @@ using System;
 public class NewBehaviourScript : MonoBehaviour
 {
     public Board board;
+    public bool playerOneTurn;
 
     [Header("Materials")]
     public Material[] lightSquareMaterial;
@@ -23,6 +24,7 @@ public class NewBehaviourScript : MonoBehaviour
     private void Start()
     {
         board = new Board();
+        playerOneTurn = true;
         cam.transform.position = new Vector3((float)Board.LENGTH_X / 2 - 0.5f, (float)Board.LENGTH_Y / 2 - 0.5f, -10f);
         GenerateTiles(Board.LENGTH_X, Board.LENGTH_Y);
         GeneratePieces();
@@ -48,10 +50,9 @@ public class NewBehaviourScript : MonoBehaviour
             {
                 selectedPiece = null;
             }
-            else if (selectedPiece == null && touchInput.CompareTag("Piece"))
+            else if (selectedPiece == null && IsValidPiece(touchInput))
             {
                 selectedPiece = touchInput;
-
                 legalMoves = HighlightLegalMoves(selectedPiece, 1);
             }
             else if (selectedPiece != null)
@@ -63,6 +64,7 @@ public class NewBehaviourScript : MonoBehaviour
 
                 legalMoves = null;
             }
+        
         }
 
         if (selectedPiece != null && selectedPieceMoveTo != null)
@@ -72,10 +74,22 @@ public class NewBehaviourScript : MonoBehaviour
 
             selectedPiece = null;
             selectedPieceMoveTo = null;
+
+            playerOneTurn = !playerOneTurn;
         }
 
     }
 
+    private bool IsValidPiece(GameObject touchInput)
+    {
+        if(!touchInput.CompareTag("Piece")) return false;
+
+        int pieceIndex = VectorToOneD(touchInput.transform.position);
+
+        if ((playerOneTurn && pieceIndex < Board.MID_OF_BOARD) || (!playerOneTurn && pieceIndex >= Board.MID_OF_BOARD))
+            return true;
+        else return false;
+    }
 
     private List<int> HighlightLegalMoves(GameObject piece, int shade)
     {

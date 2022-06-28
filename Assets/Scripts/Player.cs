@@ -4,11 +4,13 @@ using UnityEngine;
 
 public abstract class Player : MonoBehaviour
 {
-    public int num;
+    public int playerNum;
+
+    //public List<int> capturedPices
     
-    public Player(int num)
+    public Player(int playerNum)
     {
-        this.num = num;
+        this.playerNum = playerNum;
     }
 
     public abstract int GetPlayerMove();
