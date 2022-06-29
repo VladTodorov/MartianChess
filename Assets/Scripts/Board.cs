@@ -77,11 +77,12 @@ public class Board
         }
         else if (type == 2)
         {
-            for (int i = 4; i < directionOffset.Length; ++i)
+            for (int i = 0; i < 4; ++i)
             {
                 int pos = boardPos;
                 int startPos = boardPos;
-                while (tilesToEdge[pos][i] > 0)
+                int j = 0;
+                while (tilesToEdge[pos][i] > 0 && j < 2)
                 {
                     if (board[pos + directionOffset[i]] == 0)
                     {
@@ -99,6 +100,7 @@ public class Board
                     }
                     else break;
                     pos += directionOffset[i];
+                    ++j;
                 }
             }
         }
