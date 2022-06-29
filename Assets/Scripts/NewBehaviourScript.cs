@@ -70,7 +70,6 @@ public class NewBehaviourScript : MonoBehaviour
         if (selectedPiece != null && selectedPieceMoveTo != null)
         {
             MakeMove(selectedPiece, selectedPieceMoveTo);
-            //selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
 
             selectedPiece = null;
             selectedPieceMoveTo = null;
@@ -88,10 +87,29 @@ public class NewBehaviourScript : MonoBehaviour
 
         if (selectedPieceMoveTo.CompareTag("Piece"))
         {
-            selectedPieceMoveTo.transform.position = new Vector3(0, 8, -1);
-            selectedPieceMoveTo.transform.localScale = selectedPieceMoveTo.transform.localScale/1.7f;
+            PieceCaptured(selectedPieceMoveTo);
         }
 
+        //selectedPiece.transform.position = v;
+
+    }
+
+    private void PieceCaptured(GameObject captured)
+    {
+        int pos = VectorToOneD(captured.transform.position);
+        //board.PieceCaptured(pos);
+
+        captured.transform.localScale = captured.transform.localScale / 1.7f; ;
+        
+        if (pos < Board.MID_OF_BOARD)
+        {
+            captured.transform.position = new Vector3(-1, 8 - board.p2Captures.Count/2f, -1);
+        }
+        else
+        {
+            captured.transform.position = new Vector3(4, (board.p1Captures.Count - 1)/2f , -1);
+        }
+        
     }
 
     private bool IsValidPiece(GameObject touchInput)

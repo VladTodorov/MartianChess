@@ -15,10 +15,17 @@ public class Board
     private static int[][] tilesToEdge;
     private static readonly int[] directionOffset = new int[] {LENGTH_X, -LENGTH_X, -1, 1, LENGTH_X - 1, LENGTH_X + 1, -LENGTH_X - 1, -LENGTH_X + 1};
 
+    public List<int> p1Captures;
+    public List<int> p2Captures;
+
+    public bool playerOneTurn;
+
     public Board(int[] board)
     {
         this.board = board;
         PopulateTilesToEdge();
+        p1Captures = new List<int>();
+        p2Captures = new List<int>();
     }
 
     public Board()
@@ -36,6 +43,8 @@ public class Board
             0, 2, 3, 3,
         };
         PopulateTilesToEdge();
+        p1Captures = new List<int>();
+        p2Captures = new List<int>();
     }
 
     public int Get(int i) => board[i];
@@ -55,11 +64,11 @@ public class Board
                     {
                         legalMoves.Add(boardPos + directionOffset[i]);
                     }
-                    else if (boardPos < MID_OF_BOARD && boardPos + directionOffset[i] > MID_OF_BOARD)
+                    else if (boardPos < MID_OF_BOARD && boardPos + directionOffset[i] >= MID_OF_BOARD)
                     {
                         legalMoves.Add(boardPos + directionOffset[i]);
                     }
-                    else if (boardPos > MID_OF_BOARD && boardPos + directionOffset[i] < MID_OF_BOARD)
+                    else if (boardPos >= MID_OF_BOARD && boardPos + directionOffset[i] < MID_OF_BOARD)
                     {
                         legalMoves.Add(boardPos + directionOffset[i]);
                     }
@@ -78,12 +87,12 @@ public class Board
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                     }
-                    else if (startPos < MID_OF_BOARD && pos + directionOffset[i] > MID_OF_BOARD)
+                    else if (startPos < MID_OF_BOARD && pos + directionOffset[i] >= MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                         break;
                     }
-                    else if (startPos > MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
+                    else if (startPos >= MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                         break;
@@ -105,12 +114,12 @@ public class Board
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                     }
-                    else if (startPos < MID_OF_BOARD && pos + directionOffset[i] > MID_OF_BOARD)
+                    else if (startPos < MID_OF_BOARD && pos + directionOffset[i] >= MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                         break;
                     }
-                    else if (startPos > MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
+                    else if (startPos >= MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                         break;
@@ -128,15 +137,32 @@ public class Board
     public void MakeMove(int from, int to)
     {
         int pieceType = board[from];
-        
+
         // see if piece was taken
-        
+
+       if (board[to] != 0) PieceCaptured(to);
+
         board[from] = 0;
         board[to] = pieceType;
 
         //change player turn
 
-        Debug.Log(PrintBoard());
+        //Debug.Log(PrintBoard());
+    }
+
+    public void PieceCaptured(int captred)
+    {
+        if (captred < MID_OF_BOARD)
+        {
+            p2Captures.Add(captred);
+            //p1Captures.ForEach(p => Debug.Log(p));
+            //Debug.Log("add " + p1Captures.Count);
+        }
+        else
+        {
+            p1Captures.Add(captred);
+            //p2Captures.ForEach(p => Debug.Log(p));
+        }
     }
 
     private static void PopulateTilesToEdge()
