@@ -7,7 +7,7 @@ using System;
 public class NewBehaviourScript : MonoBehaviour
 {
     public Board board;
-    public bool playerOneTurn;
+    //public bool playerOneTurn;
 
     [Header("Materials")]
     public Material[] lightSquareMaterial;
@@ -24,7 +24,6 @@ public class NewBehaviourScript : MonoBehaviour
     private void Start()
     {
         board = new Board();
-        playerOneTurn = true;
         cam.transform.position = new Vector3((float)Board.LENGTH_X / 2 - 0.5f, (float)Board.LENGTH_Y / 2 - 0.5f, -10f);
         GenerateTiles(Board.LENGTH_X, Board.LENGTH_Y);
         GeneratePieces();
@@ -73,8 +72,6 @@ public class NewBehaviourScript : MonoBehaviour
 
             selectedPiece = null;
             selectedPieceMoveTo = null;
-
-            playerOneTurn = !playerOneTurn;
         }
 
     }
@@ -118,9 +115,7 @@ public class NewBehaviourScript : MonoBehaviour
 
         int pieceIndex = VectorToOneD(touchInput.transform.position);
 
-        if((playerOneTurn && pieceIndex < Board.MID_OF_BOARD) || (!playerOneTurn && pieceIndex >= Board.MID_OF_BOARD))
-            return true;
-        else return false;
+        return board.IsValidPiece(pieceIndex);
     }
 
     private List<int> HighlightLegalMoves(GameObject piece, int shade)

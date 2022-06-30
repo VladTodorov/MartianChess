@@ -19,6 +19,7 @@ public class Board
     public List<int> p2Captures;
 
     public bool playerOneTurn;
+    private (int from, int to) lastCrossedBorder;
 
     public Board(int[] board)
     {
@@ -45,6 +46,7 @@ public class Board
         PopulateTilesToEdge();
         p1Captures = new List<int>();
         p2Captures = new List<int>();
+        playerOneTurn = true;
     }
 
     public int Get(int i) => board[i];
@@ -140,14 +142,12 @@ public class Board
     {
         int pieceType = board[from];
 
-        // see if piece was taken
-
-       if (board[to] != 0) PieceCaptured(to);
+        if (board[to] != 0) PieceCaptured(to);
 
         board[from] = 0;
         board[to] = pieceType;
 
-        //change player turn
+        playerOneTurn = !playerOneTurn;
 
         //Debug.Log(PrintBoard());
     }
@@ -165,6 +165,13 @@ public class Board
             p1Captures.Add(captred);
             //p2Captures.ForEach(p => Debug.Log(p));
         }
+    }
+
+    public bool IsValidPiece(int pieceIndex)
+    {
+        if ((playerOneTurn && pieceIndex < MID_OF_BOARD) || (!playerOneTurn && pieceIndex >= MID_OF_BOARD))
+            return true;
+        return false;
     }
 
     private static void PopulateTilesToEdge()
