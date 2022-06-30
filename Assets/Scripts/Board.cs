@@ -60,7 +60,7 @@ public class Board
         {
             for (int i = 4; i < directionOffset.Length; i++)
             {
-                if (tilesToEdge[boardPos][i] > 0)
+                if (tilesToEdge[boardPos][i] > 0 && !IsTakebackMove(boardPos, boardPos + directionOffset[i]))
                 {
                     if (board[boardPos + directionOffset[i]] == 0)
                     {
@@ -86,7 +86,8 @@ public class Board
                 int j = 0;
                 while (tilesToEdge[pos][i] > 0 && j < 2)
                 {
-                    if (board[pos + directionOffset[i]] == 0)
+                    if (IsTakebackMove(startPos, pos + directionOffset[i])) { }
+                    else if (board[pos + directionOffset[i]] == 0)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                     }
@@ -114,7 +115,8 @@ public class Board
                 int startPos = boardPos;
                 while (tilesToEdge[pos][i] > 0)
                 {
-                    if (board[pos + directionOffset[i]] == 0)
+                    if (IsTakebackMove(startPos, pos + directionOffset[i])) { }
+                    else if (board[pos + directionOffset[i]] == 0)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                     }
@@ -134,15 +136,29 @@ public class Board
             }
         }
 
+        //could remove take back moves from list here for readability
+
         return legalMoves;
     }
 
-    //was UpdateBoard(Vector3 from, Vector3 to)
+
+
+
     public void MakeMove(int from, int to)
     {
         int pieceType = board[from];
 
         if (board[to] != 0) PieceCaptured(to);
+        if (CrossedBorder(from, to))
+        {
+            lastCrossedBorder.from = from;
+            lastCrossedBorder.to = to;
+        }
+        else
+        {
+            lastCrossedBorder.from = -1;
+            lastCrossedBorder.to = -1;
+        }
 
         board[from] = 0;
         board[to] = pieceType;
@@ -151,6 +167,7 @@ public class Board
 
         //Debug.Log(PrintBoard());
     }
+
 
     public void PieceCaptured(int captred)
     {
@@ -172,6 +189,15 @@ public class Board
         if ((playerOneTurn && pieceIndex < MID_OF_BOARD) || (!playerOneTurn && pieceIndex >= MID_OF_BOARD))
             return true;
         return false;
+    }
+
+    private bool CrossedBorder(int from, int to) =>
+        (from < MID_OF_BOARD && to >= MID_OF_BOARD) || (from >= MID_OF_BOARD && to < MID_OF_BOARD);
+
+    private bool IsTakebackMove(int from, int to)
+    {
+        Debug.Log(from + " " + to + "  last " + lastCrossedBorder.to + " " + lastCrossedBorder.from);
+        return from == lastCrossedBorder.to && to == lastCrossedBorder.from;
     }
 
     private static void PopulateTilesToEdge()

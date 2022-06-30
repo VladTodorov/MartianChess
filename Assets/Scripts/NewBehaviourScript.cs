@@ -7,7 +7,6 @@ using System;
 public class NewBehaviourScript : MonoBehaviour
 {
     public Board board;
-    //public bool playerOneTurn;
 
     [Header("Materials")]
     public Material[] lightSquareMaterial;
@@ -56,7 +55,7 @@ public class NewBehaviourScript : MonoBehaviour
             }
             else if (selectedPiece != null)
             {
-                if(IsLegalMove(touchInput, legalMoves))
+                if(legalMoves.Contains(VectorToOneD(touchInput.transform.position)))
                     selectedPieceMoveTo = touchInput;
                 else
                     selectedPiece = null;
@@ -147,18 +146,6 @@ public class NewBehaviourScript : MonoBehaviour
         return legalMoves;
 
     }
-
-    //move this to Board
-    private bool IsLegalMove(GameObject touchInput, List<int> legalMoves)
-    {
-        int pos = VectorToOneD(touchInput.transform.position);   
-        foreach (int t in legalMoves)
-            if (t == pos)
-                return true;
-
-        return false;
-    }
-
 
 
 
