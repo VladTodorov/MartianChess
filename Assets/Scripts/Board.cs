@@ -93,6 +93,7 @@ public class Board
                 int j = 0;
                 while (tilesToEdge[pos][i] > 0 && j < 2)
                 {
+
                     if (IsTakebackMove(startPos, pos + directionOffset[i])) { }
                     else if (board[pos + directionOffset[i]] == 0)
                     {
@@ -110,10 +111,12 @@ public class Board
                     }
                     else if (canPromoteToQueen && board[pos + directionOffset[i]] == 1)
                     {
-                        legalMoves.Add(boardPos + directionOffset[i]);
+                        legalMoves.Add(pos + directionOffset[i]);
                         break;
                     }
-                    else break;
+                    else
+                        break; 
+
                     pos += directionOffset[i];
                     ++j;
                 }
