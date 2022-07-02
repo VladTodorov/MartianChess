@@ -150,7 +150,10 @@ public class Board
         if (board[to] != 0)
         {
             if (IsOnSameSide(from, to))
-                PiecePromotion(from, to);
+            {
+                board[to] = PiecePromote(from, to);
+                board[from] = 0;
+            }
             else
             {
                 PieceCaptured(to);
@@ -180,14 +183,12 @@ public class Board
         //Debug.Log(PrintBoard());
     }
 
-    private void PiecePromotion(int from, int to)
+    public int PiecePromote(int from, int to)
     {
         if (from == 2 || to == 2)
-            board[to] = 3;
+            return 3;
         else
-            board[to] = 2;
-        
-        board[from] = 0;
+            return 2;
     }
 
     public void PieceCaptured(int captred)
@@ -218,7 +219,7 @@ public class Board
     public bool IsValidPiece(int pieceIndex) =>
         (playerOneTurn && pieceIndex < MID_OF_BOARD) || (!playerOneTurn && pieceIndex >= MID_OF_BOARD);
 
-    private bool IsOnSameSide(int pos1, int pos2) =>
+    public bool IsOnSameSide(int pos1, int pos2) =>
         (pos1 < MID_OF_BOARD && pos2 < MID_OF_BOARD) || (pos1 >= MID_OF_BOARD && pos2 >= MID_OF_BOARD);
     
     private bool IsTakebackMove(int from, int to) =>

@@ -77,13 +77,27 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void MakeMove(GameObject selectedPiece, GameObject selectedPieceMoveTo)
     {
-        board.MakeMove(VectorToOneD(selectedPiece.transform.position), VectorToOneD(selectedPieceMoveTo.transform.position));
+        int from = VectorToOneD(selectedPiece.transform.position);
+        int to = VectorToOneD(selectedPieceMoveTo.transform.position);
+        
+        board.MakeMove(from, to);
 
         selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
 
         if (selectedPieceMoveTo.CompareTag("Piece"))
         {
-            PieceCaptured(selectedPieceMoveTo);
+            if (board.IsOnSameSide(from, to))
+            {
+                Destroy(selectedPiece);
+                Destroy(selectedPieceMoveTo);
+
+                GeneratePiece(board.PiecePromote(from, to), to);
+                print(board.PiecePromote(from, to));
+            }
+            else
+            {
+                PieceCaptured(selectedPieceMoveTo);
+            }
         }
 
         //selectedPiece.transform.position = v;
