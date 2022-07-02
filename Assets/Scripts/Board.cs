@@ -68,11 +68,7 @@ public class Board
                     {
                         legalMoves.Add(boardPos + directionOffset[i]);
                     }
-                    else if (boardPos < MID_OF_BOARD && boardPos + directionOffset[i] >= MID_OF_BOARD)
-                    {
-                        legalMoves.Add(boardPos + directionOffset[i]);
-                    }
-                    else if (boardPos >= MID_OF_BOARD && boardPos + directionOffset[i] < MID_OF_BOARD)
+                    else if (!IsOnSameSide(boardPos, boardPos + directionOffset[i]))
                     {
                         legalMoves.Add(boardPos + directionOffset[i]);
                     }
@@ -99,12 +95,7 @@ public class Board
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                     }
-                    else if (startPos < MID_OF_BOARD && pos + directionOffset[i] >= MID_OF_BOARD)
-                    {
-                        legalMoves.Add(pos + directionOffset[i]);
-                        break;
-                    }
-                    else if (startPos >= MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
+                    else if (!IsOnSameSide(startPos, pos + directionOffset[i]))
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                         break;
@@ -114,8 +105,7 @@ public class Board
                         legalMoves.Add(pos + directionOffset[i]);
                         break;
                     }
-                    else
-                        break; 
+                    else break; 
 
                     pos += directionOffset[i];
                     ++j;
@@ -135,12 +125,7 @@ public class Board
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                     }
-                    else if (startPos < MID_OF_BOARD && pos + directionOffset[i] >= MID_OF_BOARD)
-                    {
-                        legalMoves.Add(pos + directionOffset[i]);
-                        break;
-                    }
-                    else if (startPos >= MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
+                    else if (!IsOnSameSide(startPos, pos + directionOffset[i]))
                     {
                         legalMoves.Add(pos + directionOffset[i]);
                         break;
@@ -156,23 +141,6 @@ public class Board
         return legalMoves;
     }
 
-    private bool CanPromoteTo(int piece)
-    {
-        if (playerOneTurn)
-        {
-            for (int i = 0; i < MID_OF_BOARD; ++i)
-                if (board[i] == piece)
-                    return false;
-        }
-        else
-        {
-            for (int i = MID_OF_BOARD; i < LENGTH; ++i)
-                if (board[i] == piece)
-                    return false;
-        }
-        return true;
-    }
-
 
 
     public void MakeMove(int from, int to)
@@ -180,7 +148,8 @@ public class Board
         int pieceType = board[from];
 
         if (board[to] != 0) PieceCaptured(to);
-        if (CrossedBorder(from, to))
+
+        if (!IsOnSameSide(from, to))
         {
             lastCrossedBorder.from = from;
             lastCrossedBorder.to = to;
@@ -203,33 +172,36 @@ public class Board
     public void PieceCaptured(int captred)
     {
         if (captred < MID_OF_BOARD)
-        {
             p2Captures.Add(captred);
-            //p1Captures.ForEach(p => Debug.Log(p));
-            //Debug.Log("add " + p1Captures.Count);
+        else
+            p1Captures.Add(captred);
+    }
+
+    private bool CanPromoteTo(int piece)
+    {
+        if (playerOneTurn)
+        {
+            for (int i = 0; i < MID_OF_BOARD; ++i)
+                if (board[i] == piece)
+                    return false;
         }
         else
         {
-            p1Captures.Add(captred);
-            //p2Captures.ForEach(p => Debug.Log(p));
+            for (int i = MID_OF_BOARD; i < LENGTH; ++i)
+                if (board[i] == piece)
+                    return false;
         }
+        return true;
     }
 
-    public bool IsValidPiece(int pieceIndex)
-    {
-        if ((playerOneTurn && pieceIndex < MID_OF_BOARD) || (!playerOneTurn && pieceIndex >= MID_OF_BOARD))
-            return true;
-        return false;
-    }
+    public bool IsValidPiece(int pieceIndex) =>
+        (playerOneTurn && pieceIndex < MID_OF_BOARD) || (!playerOneTurn && pieceIndex >= MID_OF_BOARD);
 
-    private bool CrossedBorder(int from, int to) =>
-        (from < MID_OF_BOARD && to >= MID_OF_BOARD) || (from >= MID_OF_BOARD && to < MID_OF_BOARD);
-
-    private bool IsTakebackMove(int from, int to)
-    {
-        //Debug.Log(from + " " + to + "  last " + lastCrossedBorder.to + " " + lastCrossedBorder.from);
-        return from == lastCrossedBorder.to && to == lastCrossedBorder.from;
-    }
+    private bool IsOnSameSide(int pos1, int pos2) =>
+        (pos1 < MID_OF_BOARD && pos2 < MID_OF_BOARD) || (pos1 >= MID_OF_BOARD && pos2 >= MID_OF_BOARD);
+    
+    private bool IsTakebackMove(int from, int to) =>
+        from == lastCrossedBorder.to && to == lastCrossedBorder.from;
 
     private static void PopulateTilesToEdge()
     {
