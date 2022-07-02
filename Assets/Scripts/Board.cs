@@ -56,6 +56,8 @@ public class Board
         int type = board[boardPos];
         List<int> legalMoves = new();
 
+        bool canPromoteToQueen = CanPromoteTo(3);
+
         if (type == 1)
         {
             for (int i = 4; i < directionOffset.Length; i++)
@@ -74,6 +76,11 @@ public class Board
                     {
                         legalMoves.Add(boardPos + directionOffset[i]);
                     }
+                    else if ((CanPromoteTo(2) && board[boardPos + directionOffset[i]] == 1) || (canPromoteToQueen && board[boardPos + directionOffset[i]] == 2))
+                    {
+                        legalMoves.Add(boardPos + directionOffset[i]);
+                    }
+
                 }
             }
         }
@@ -99,6 +106,11 @@ public class Board
                     else if (startPos >= MID_OF_BOARD && pos + directionOffset[i] < MID_OF_BOARD)
                     {
                         legalMoves.Add(pos + directionOffset[i]);
+                        break;
+                    }
+                    else if (canPromoteToQueen && board[pos + directionOffset[i]] == 1)
+                    {
+                        legalMoves.Add(boardPos + directionOffset[i]);
                         break;
                     }
                     else break;
@@ -141,6 +153,22 @@ public class Board
         return legalMoves;
     }
 
+    private bool CanPromoteTo(int piece)
+    {
+        if (playerOneTurn)
+        {
+            for (int i = 0; i < MID_OF_BOARD; ++i)
+                if (board[i] == piece)
+                    return false;
+        }
+        else
+        {
+            for (int i = MID_OF_BOARD; i < LENGTH; ++i)
+                if (board[i] == piece)
+                    return false;
+        }
+        return true;
+    }
 
 
 
@@ -196,7 +224,7 @@ public class Board
 
     private bool IsTakebackMove(int from, int to)
     {
-        Debug.Log(from + " " + to + "  last " + lastCrossedBorder.to + " " + lastCrossedBorder.from);
+        //Debug.Log(from + " " + to + "  last " + lastCrossedBorder.to + " " + lastCrossedBorder.from);
         return from == lastCrossedBorder.to && to == lastCrossedBorder.from;
     }
 
