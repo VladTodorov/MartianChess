@@ -147,7 +147,22 @@ public class Board
     {
         int pieceType = board[from];
 
-        if (board[to] != 0) PieceCaptured(to);
+        if (board[to] != 0)
+        {
+            if (IsOnSameSide(from, to))
+                PiecePromotion(from, to);
+            else
+            {
+                PieceCaptured(to);
+                board[from] = 0;
+                board[to] = pieceType;
+            }
+        }
+        else
+        {
+            board[from] = 0;
+            board[to] = pieceType;
+        }
 
         if (!IsOnSameSide(from, to))
         {
@@ -160,14 +175,20 @@ public class Board
             lastCrossedBorder.to = -1;
         }
 
-        board[from] = 0;
-        board[to] = pieceType;
-
         playerOneTurn = !playerOneTurn;
 
         //Debug.Log(PrintBoard());
     }
 
+    private void PiecePromotion(int from, int to)
+    {
+        if (from == 2 || to == 2)
+            board[to] = 3;
+        else
+            board[to] = 2;
+        
+        board[from] = 0;
+    }
 
     public void PieceCaptured(int captred)
     {
