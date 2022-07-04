@@ -24,6 +24,11 @@ public class NewBehaviourScript : MonoBehaviour
     {
         board = new Board();
         cam.transform.position = new Vector3((float)Board.LENGTH_X / 2 - 0.5f, (float)Board.LENGTH_Y / 2 - 0.5f, -10f);
+        
+        GameObject pieceLookAt = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        pieceLookAt.transform.position = new Vector3((float)Board.LENGTH_X / 2 - 0.5f, (float)Board.LENGTH_Y / 2 - 0.5f, 3f);
+        pieceLookAt.tag = "PieceLookAt";
+
         GenerateTiles(Board.LENGTH_X, Board.LENGTH_Y);
         GeneratePieces();
     }
@@ -82,22 +87,26 @@ public class NewBehaviourScript : MonoBehaviour
         
         board.MakeMove(from, to);
 
-        selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
-
         if (selectedPieceMoveTo.CompareTag("Piece"))
         {
+            selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
+
             if (board.IsOnSameSide(from, to))
             {
                 Destroy(selectedPiece);
                 Destroy(selectedPieceMoveTo);
 
                 GeneratePiece(board.PiecePromote(from, to), to);
-                print(board.PiecePromote(from, to));
+                //print(board.PiecePromote(from, to));
             }
             else
             {
                 PieceCaptured(selectedPieceMoveTo);
             }
+        }
+        else
+        {
+            selectedPiece.transform.position = selectedPieceMoveTo.transform.position + new Vector3(0,0,-1);
         }
 
         //selectedPiece.transform.position = v;

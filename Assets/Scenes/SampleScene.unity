@@ -257,10 +257,10 @@ MonoBehaviour:
   darkSquareMaterial:
   - {fileID: 2100000, guid: a00f1015a2fe18c45bf58698c77c41e1, type: 2}
   - {fileID: 2100000, guid: e4b1e19b4d9a280458184b78094cf72a, type: 2}
-  cam: {fileID: 519420032}
   queenObject: {fileID: 8001552876461151428, guid: 042a728b8930a8642a50ddeef3b29484, type: 3}
   bishopObject: {fileID: 377510822262048875, guid: cd2a409fca7496c43a6578046f102505, type: 3}
   pawnObject: {fileID: 7785981778449734462, guid: 9108712077f384c4486ce611d67d397a, type: 3}
+  cam: {fileID: 519420032}
 --- !u!1 &2043589492
 GameObject:
   m_ObjectHideFlags: 0
