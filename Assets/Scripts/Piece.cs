@@ -6,15 +6,30 @@ public class Piece : MonoBehaviour
 {
     public GameObject target;
 
+    private Vector3 desiredPos;
+
     private void Start()
     {
         target = GameObject.FindGameObjectWithTag("PieceLookAt");
         transform.forward = new Vector3(0, 90, 90);
+        desiredPos = transform.position;
     }
 
     void Update()
     {
+        //transform.position = desiredPos;
+        //transform.position = Vector3.Lerp(transform.position, desiredPos, Time.deltaTime * 50f);
+        transform.position = Vector3.Lerp(transform.position, desiredPos, Time.deltaTime * 50f);
+
         transform.LookAt(target.transform);
         transform.Rotate(new Vector3(90,0,0));
     }
+
+    public void SetPosition(Vector3 newPos)
+    {
+        desiredPos = newPos;
+    }
+
+
+
 }

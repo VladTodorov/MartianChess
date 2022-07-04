@@ -49,6 +49,8 @@ public class NewBehaviourScript : MonoBehaviour
                 HighlightLegalMoves(selectedPiece, 0);
 
             GameObject touchInput = GetTouch();
+            //print(touchInput.name);
+
             if (touchInput == null || touchInput == selectedPiece)
             {
                 selectedPiece = null;
@@ -80,36 +82,35 @@ public class NewBehaviourScript : MonoBehaviour
 
     }
 
-    private void MakeMove(GameObject selectedPiece, GameObject selectedPieceMoveTo)
+    private void MakeMove(GameObject fromObj, GameObject toObj)
     {
-        int from = VectorToOneD(selectedPiece.transform.position);
-        int to = VectorToOneD(selectedPieceMoveTo.transform.position);
+        int from = VectorToOneD(fromObj.transform.position);
+        int to = VectorToOneD(toObj.transform.position);
         
         board.MakeMove(from, to);
 
-        if (selectedPieceMoveTo.CompareTag("Piece"))
+        if (toObj.CompareTag("Piece"))
         {
-            selectedPiece.transform.position = selectedPieceMoveTo.transform.position;
+            fromObj.GetComponent<Piece>().SetPosition(toObj.transform.position);
 
             if (board.IsOnSameSide(from, to))
             {
-                Destroy(selectedPiece);
-                Destroy(selectedPieceMoveTo);
+                Destroy(fromObj);
+                Destroy(toObj);
 
                 GeneratePiece(board.PiecePromote(from, to), to);
                 //print(board.PiecePromote(from, to));
             }
             else
             {
-                PieceCaptured(selectedPieceMoveTo);
+                PieceCaptured(toObj);
             }
         }
         else
         {
-            selectedPiece.transform.position = selectedPieceMoveTo.transform.position + new Vector3(0,0,-1);
+            fromObj.GetComponent<Piece>().SetPosition(toObj.transform.position + new Vector3(0, 0, -1));
+            //selectedPiece.transform.position = selectedPieceMoveTo.transform.position + new Vector3(0,0,-1);
         }
-
-        //selectedPiece.transform.position = v;
 
     }
 
@@ -122,11 +123,13 @@ public class NewBehaviourScript : MonoBehaviour
         
         if (pos < Board.MID_OF_BOARD)
         {
-            captured.transform.position = new Vector3(-1, 8 - board.p2Captures.Count/2f, -1);
+            captured.GetComponent<Piece>().SetPosition(new Vector3(-1, 8 - board.p2Captures.Count / 2f, -1));
+            //captured.transform.position = new Vector3(-1, 8 - board.p2Captures.Count/2f, -1);
         }
         else
         {
-            captured.transform.position = new Vector3(4, (board.p1Captures.Count - 1)/2f , -1);
+            captured.GetComponent<Piece>().SetPosition(new Vector3(4, (board.p1Captures.Count - 1) / 2f, -1));
+            //captured.transform.position = new Vector3(4, (board.p1Captures.Count - 1)/2f , -1);
         }
         
     }
@@ -218,6 +221,7 @@ public class NewBehaviourScript : MonoBehaviour
             piece = Instantiate(pawnObject, new Vector3(x, y, -1), Quaternion.identity);
             piece.tag = "Piece";
             piece.layer = LayerMask.NameToLayer("Pieces");
+            //piece.AddComponent<Piece>();
         }
         else if (type == 2)
         {

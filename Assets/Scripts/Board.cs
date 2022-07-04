@@ -180,7 +180,7 @@ public class Board
 
         playerOneTurn = !playerOneTurn;
 
-        //Debug.Log(PrintBoard());
+        Debug.Log(PrintBoard());
     }
 
     public int PiecePromote(int from, int to)
