@@ -218,7 +218,7 @@ public class NewBehaviourScript : MonoBehaviour
         
         if (type == 1)
         {
-            piece = Instantiate(pawnObject, new Vector3(x, y, -1), Quaternion.identity);
+            piece = Instantiate(pawnObject, new Vector3(x, y, -0.5f), Quaternion.identity);
             piece.tag = "Piece";
             piece.layer = LayerMask.NameToLayer("Pieces");
             //piece.AddComponent<Piece>();

@@ -22,7 +22,8 @@ public class Piece : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, desiredPos, Time.deltaTime * 50f);
 
         transform.LookAt(target.transform);
-        transform.Rotate(new Vector3(-90,0,0));
+        transform.Rotate(new Vector3(-90, 0,0));
+        transform.Rotate(new Vector3(0, -45,0));
     }
 
     public void SetPosition(Vector3 newPos)
