@@ -218,20 +218,20 @@ public class NewBehaviourScript : MonoBehaviour
         
         if (type == 1)
         {
-            piece = Instantiate(pawnObject, new Vector3(x, y, -0.5f), Quaternion.identity);
+            piece = Instantiate(pawnObject, new Vector3(x, y, -0.1f), Quaternion.identity);
             piece.tag = "Piece";
             piece.layer = LayerMask.NameToLayer("Pieces");
             //piece.AddComponent<Piece>();
         }
         else if (type == 2)
         {
-            piece = Instantiate(bishopObject, new Vector3(x, y, -1), Quaternion.identity);
+            piece = Instantiate(bishopObject, new Vector3(x, y, -0.1f), Quaternion.identity);
             piece.tag = "Piece";
             piece.layer = LayerMask.NameToLayer("Pieces");
         }
         else if (type == 3)
         {
-            piece = Instantiate(queenObject, new Vector3(x, y, -1), Quaternion.identity);
+            piece = Instantiate(queenObject, new Vector3(x, y, -0.1f), Quaternion.identity);
             piece.tag = "Piece";
             piece.layer = LayerMask.NameToLayer("Pieces");
         }
