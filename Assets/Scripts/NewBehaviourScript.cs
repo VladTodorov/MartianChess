@@ -108,7 +108,7 @@ public class NewBehaviourScript : MonoBehaviour
         }
         else
         {
-            fromObj.GetComponent<Piece>().SetPosition(toObj.transform.position + new Vector3(0, 0, -1));
+            fromObj.GetComponent<Piece>().SetPosition(toObj.transform.position + new Vector3(0, 0, -0.1f));
             //selectedPiece.transform.position = selectedPieceMoveTo.transform.position + new Vector3(0,0,-1);
         }
 
@@ -123,12 +123,12 @@ public class NewBehaviourScript : MonoBehaviour
         
         if (pos < Board.MID_OF_BOARD)
         {
-            captured.GetComponent<Piece>().SetPosition(new Vector3(-1, 8 - board.p2Captures.Count / 2f, -1));
+            captured.GetComponent<Piece>().SetPosition(new Vector3(-0.75f, 8 - board.p2Captures.Count / 2f, 0));
             //captured.transform.position = new Vector3(-1, 8 - board.p2Captures.Count/2f, -1);
         }
         else
         {
-            captured.GetComponent<Piece>().SetPosition(new Vector3(4, (board.p1Captures.Count - 1) / 2f, -1));
+            captured.GetComponent<Piece>().SetPosition(new Vector3(3.75f, (board.p1Captures.Count - 1) / 2f, 0));
             //captured.transform.position = new Vector3(4, (board.p1Captures.Count - 1)/2f , -1);
         }
         
