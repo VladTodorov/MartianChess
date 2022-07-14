@@ -173,6 +173,8 @@ public class Board
         {
             lastCrossedBorder.from = from;
             lastCrossedBorder.to = to;
+
+            CheckGameOver();
         }
         else
         {
@@ -183,6 +185,49 @@ public class Board
         playerOneTurn = !playerOneTurn;
 
         Debug.Log(PrintBoard());
+    }
+
+    private void CheckGameOver()
+    {
+        bool gameOver = true;
+        for (int i = 0; i < MID_OF_BOARD; i++)
+        {
+            if (board[i] != 0)
+            { 
+                gameOver = false;
+                break;
+            }
+        }
+
+        if (!gameOver)
+        {
+            gameOver = true;
+            for (int i = MID_OF_BOARD; i < LENGTH; i++)
+            {
+                if (board[i] != 0)
+                {
+                    gameOver = false;
+                    break;
+                }
+            }
+        }
+
+        if (gameOver)
+        {
+            SetWinner();
+        }
+
+
+    }
+
+    private int SetWinner()
+    {
+        int p1Points = p1Captures.AsQueryable().Sum();
+        int p2Points = p2Captures.AsQueryable().Sum();
+
+        winner = p1Points > p2Points ? 1 : 2;
+
+        return (int)winner;
     }
 
     public int PiecePromote(int from, int to)
