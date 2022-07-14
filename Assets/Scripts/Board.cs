@@ -15,6 +15,7 @@ public class Board
     private static int[][] tilesToEdge;
     private static readonly int[] directionOffset = new int[] {LENGTH_X, -LENGTH_X, -1, 1, LENGTH_X - 1, LENGTH_X + 1, -LENGTH_X - 1, -LENGTH_X + 1};
 
+    public int? winner;
     public List<int> p1Captures;
     public List<int> p2Captures;
 
@@ -47,6 +48,7 @@ public class Board
         p1Captures = new List<int>();
         p2Captures = new List<int>();
         playerOneTurn = true;
+        winner = null;
     }
 
     public int Get(int i) => board[i];
