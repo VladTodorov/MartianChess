@@ -163,11 +163,15 @@ public class NewBehaviourScript : MonoBehaviour
             int tileBitmask = 1 << 6;
 
             Physics.Raycast(origin, direction, out RaycastHit hit, 2.0f, tileBitmask);
-            Debug.DrawRay(origin, direction, Color.yellow, 15, false);
+            //Debug.DrawRay(origin, direction, Color.yellow, 15, false);
 
             //Debug.Log(hit.collider.gameObject.name);
 
-            SetTileMaterial(hit.collider.gameObject, shade);
+            if (board.Get(t) == 0 || shade == 0)
+                SetTileMaterial(hit.collider.gameObject, shade);
+            else
+                SetTileMaterial(hit.collider.gameObject, shade + 1);
+
         }
         return legalMoves;
 
