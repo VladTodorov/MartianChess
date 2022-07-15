@@ -62,7 +62,7 @@ public class NewBehaviourScript : MonoBehaviour
             }
             else if (selectedPiece != null)
             {
-                if(legalMoves.Contains(VectorToOneD(touchInput.transform.position)))
+                if (legalMoves.Contains(VectorToOneD(touchInput.transform.position)))
                     selectedPieceMoveTo = touchInput;
                 else
                     selectedPiece = null;
@@ -146,31 +146,37 @@ public class NewBehaviourScript : MonoBehaviour
     private List<int> HighlightLegalMoves(GameObject piece, int shade)
     {
         int boardPos = VectorToOneD(piece.transform.position);
+        Vector3 direction = new(0, 0, -1);
+        int tileBitmask = 1 << 6;
 
         List<int> legalMoves = board.GetLegalMoves(boardPos);
 
+        Physics.Raycast(piece.transform.position + new Vector3(0, 0, 1), direction, out RaycastHit hit, 2.0f, tileBitmask);
+        Debug.DrawRay(piece.transform.position + new Vector3(0, 0, 1), direction, Color.yellow, 15, false);
+
+        if (shade != 0)
+            SetTileMaterial(hit.collider.gameObject, shade + 2);
+        else
+            SetTileMaterial(hit.collider.gameObject, shade);
+        
         foreach (int t in legalMoves)
         {
             //add layermask to tiles/pieces
-            Vector3 origin, direction;
-            origin = OneDToVector(t);
-            direction = new Vector3(0, 0, -1);
+            Vector3 origin = OneDToVector(t);
             origin.z = 1;
 
             //Debug.Log(origin);
             //Debug.Log(direction);
 
-            int tileBitmask = 1 << 6;
-
-            Physics.Raycast(origin, direction, out RaycastHit hit, 2.0f, tileBitmask);
-            //Debug.DrawRay(origin, direction, Color.yellow, 15, false);
+            Physics.Raycast(origin, direction, out RaycastHit hit2, 2.0f, tileBitmask);
+            Debug.DrawRay(origin, direction, Color.yellow, 15, false);
 
             //Debug.Log(hit.collider.gameObject.name);
 
             if (board.Get(t) == 0 || shade == 0)
-                SetTileMaterial(hit.collider.gameObject, shade);
+                SetTileMaterial(hit2.collider.gameObject, shade);
             else
-                SetTileMaterial(hit.collider.gameObject, shade + 1);
+                SetTileMaterial(hit2.collider.gameObject, shade + 1);
 
         }
         return legalMoves;
