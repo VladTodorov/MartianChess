@@ -7,6 +7,7 @@ using System;
 public class NewBehaviourScript : MonoBehaviour
 {
     public Board board;
+    public GameOverScreen gameOverScreen;
 
     [Header("Materials")]
     public Material[] lightSquareMaterial;
@@ -31,6 +32,8 @@ public class NewBehaviourScript : MonoBehaviour
 
         GenerateTiles(Board.LENGTH_X, Board.LENGTH_Y);
         GeneratePieces();
+
+        GameOver();
     }
 
 
@@ -183,7 +186,10 @@ public class NewBehaviourScript : MonoBehaviour
 
     }
 
-
+    public void GameOver()
+    {
+        gameOverScreen.Setup(1);
+    }
 
 
     //Init
