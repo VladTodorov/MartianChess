@@ -33,7 +33,7 @@ public class NewBehaviourScript : MonoBehaviour
         GenerateTiles(Board.LENGTH_X, Board.LENGTH_Y);
         GeneratePieces();
 
-        GameOver();
+        //GameOver();
     }
 
 
@@ -45,6 +45,11 @@ public class NewBehaviourScript : MonoBehaviour
     {
 
         //UsingMouse();
+        if(board.winner != null)
+        {
+            GameOver();
+            enabled = false;
+        }
 
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
