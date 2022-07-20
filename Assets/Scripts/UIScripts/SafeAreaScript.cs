@@ -10,6 +10,8 @@ public class SafeAreaScript : MonoBehaviour
     Vector2 minAnchor;
     Vector2 maxAnchor;
 
+    public bool isFlush;
+
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -25,5 +27,19 @@ public class SafeAreaScript : MonoBehaviour
 
         rectTransform.anchorMin = minAnchor;
         rectTransform.anchorMax = maxAnchor;
+
+        if(maxAnchor.y == 1)
+            isFlush = true;
+        else
+            isFlush = false;
+
+        
+        //print(isFlush);
+        //print(minAnchor);
+        //print(maxAnchor);
+        //print(Screen.width);
+        print(Screen.height);
+        print(SafeArea.size);
+        
     }
 }
