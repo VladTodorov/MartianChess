@@ -6,11 +6,12 @@ public class LogoPosisiton : MonoBehaviour
 {
     RectTransform rectTransform;
 
-    private void Awake()
+    private void Start()
     {
         rectTransform = GetComponent<RectTransform>();
         bool isFlush = GetComponentInParent<SafeAreaScript>().isFlush;
 
+        print(isFlush);
 
         if (!isFlush)
         {

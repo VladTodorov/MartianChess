@@ -34,9 +34,9 @@ public class SafeAreaScript : MonoBehaviour
             isFlush = false;
 
         
-        //print(isFlush);
+        print(isFlush);
         //print(minAnchor);
-        //print(maxAnchor);
+        print(maxAnchor);
         //print(Screen.width);
         print(Screen.height);
         print(SafeArea.size);
