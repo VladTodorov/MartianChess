@@ -326,7 +326,7 @@ public class Board
     }
 
     //Debug
-    private string PrintBoard()
+    public string PrintBoard()
     {
         string boardString = "";
         for (int i = 1; i <= board.Length; i++)
