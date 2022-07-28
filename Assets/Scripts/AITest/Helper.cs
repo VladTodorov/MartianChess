@@ -73,7 +73,7 @@ public class Helper : MonoBehaviour
     public void SetBoard(Board _board) 
     {
         board = _board;
-        board.PrintBoard();
+        //board.PrintBoard();
     }
 
     private void Start() { }
@@ -201,6 +201,17 @@ public class Helper : MonoBehaviour
             return null;
     }
 
+    public GameObject GetGameObject(int pos, int bitmask = ~0)
+    {
+        Vector3 direction = new(0, 0, 1);
+
+        Vector3 objPos = OneDToVector(pos) + new Vector3(0, 0, -1);
+        Physics.Raycast(objPos, direction, out RaycastHit hit, 2.0f, bitmask);
+        Debug.DrawRay(objPos, direction, Color.blue, 15, false);
+
+        return hit.collider.gameObject;
+    }
+
     public int VectorToOneD(Vector3 vect) => (int)vect.y * Board.LENGTH_X + (int)vect.x;
 
     public Vector3 OneDToVector(int t) => new(t % Board.LENGTH_X, t / Board.LENGTH_X, 0);
@@ -251,7 +262,8 @@ public class Helper : MonoBehaviour
 
     }
 
-
+    public void Moo() => 
+        Debug.Log("Moo");
 
     private GameObject currHighlightedTile;
     private void UsingMouse()

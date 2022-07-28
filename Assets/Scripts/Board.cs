@@ -47,8 +47,8 @@ public class Board
         board = new int[]
         {
             0, 0, 0, 0,
-            0, 0, 3, 0,
-            0, 0, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 3, 2,
             0, 0, 0, 0,
 
             0, 0, 0, 0,
@@ -321,7 +321,7 @@ public class Board
             }
             boardString += string.Format("\n");
         }
-        Debug.Log(boardString);
+        //Debug.Log(boardString);
         
     }
 

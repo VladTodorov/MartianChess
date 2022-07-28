@@ -17,7 +17,6 @@ public class HumanPlayer : MonoBehaviour
         while (true)
         {
 
-
             if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
             {
                 if (selectedPiece != null)
@@ -50,6 +49,9 @@ public class HumanPlayer : MonoBehaviour
             if (selectedPiece != null && selectedPieceMoveTo != null)
             {
                 helper.MakeMove(selectedPiece, selectedPieceMoveTo);
+
+                selectedPiece = null;
+                selectedPieceMoveTo = null;
 
                 break;
             }

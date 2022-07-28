@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class BotPlayer : MonoBehaviour
 {
-    public const string type = "Human";
+    public const string type = "Bot";
 
 
     private GameObject selectedPiece;
@@ -14,8 +14,22 @@ public class BotPlayer : MonoBehaviour
 
     public IEnumerator MakeMove(Board board, Helper helper)
     {
-        //int pos
-        throw new NotImplementedException();
+        (int from, int to) = PickMove(board);
+
+        selectedPiece = helper.GetGameObject(from);
+        selectedPieceMoveTo = helper.GetGameObject(to);
+
+        helper.MakeMove(selectedPiece, selectedPieceMoveTo);
+        yield break;
     }
+
+
+    private (int from, int to) PickMove(Board board)
+    {
+        return (22, 19);
+    }
+
+    public void Moo() =>
+        Debug.Log("Moo");
 
 }

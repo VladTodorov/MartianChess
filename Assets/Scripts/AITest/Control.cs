@@ -44,6 +44,8 @@ public class Control : MonoBehaviour
         }
 
         yield return StartCoroutine(player.MakeMove(board, helper));
+
+        yield return new WaitForSeconds(0.5f);
         StartCoroutine(BotTurn());
     }
 
@@ -59,6 +61,8 @@ public class Control : MonoBehaviour
         }
 
         yield return StartCoroutine(bot.MakeMove(board, helper));
+
+        yield return new WaitForSeconds(0.5f);
         StartCoroutine(PlayerTurn());
     }
 
@@ -90,7 +94,7 @@ public class Control : MonoBehaviour
     {
         //randomize player 1
         player = gameObject.AddComponent<HumanPlayer>();
-        //playerTwo = new HumanPlayer(2);
+        bot = gameObject.AddComponent<BotPlayer>();
     }
 
     private void GenerateTiles(int boardWidth, int boardHight)
