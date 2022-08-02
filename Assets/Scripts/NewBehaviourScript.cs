@@ -47,7 +47,7 @@ public class NewBehaviourScript : MonoBehaviour
         //UsingMouse();
         if(board.winner != null)
         {
-            StartCoroutine(GameOver());
+            StartCoroutine(GameOver((int)board.winner));
             enabled = false;
         }
 
@@ -191,11 +191,11 @@ public class NewBehaviourScript : MonoBehaviour
 
     }
 
-    public IEnumerator GameOver()
+    public IEnumerator GameOver(int winner)
     {
         // play a gameover sound here
         yield return new WaitForSeconds(3.0f);
-        gameOverScreen.Setup(1);
+        gameOverScreen.Setup(winner);
     }
 
 

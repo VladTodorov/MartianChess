@@ -13,7 +13,10 @@ public class GameOverScreen : MonoBehaviour
     public void Setup(int winner)
     {
         gameObject.SetActive(true);
-        winnerText.SetText("McLovin");
+        if(winner == 1)
+            winnerText.SetText("Player 1");
+        else
+            winnerText.SetText("Player 2");
     }
     
     public void NewGame()

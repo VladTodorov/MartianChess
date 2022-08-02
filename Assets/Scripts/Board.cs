@@ -21,6 +21,7 @@ public class Board
 
     public bool playerOneTurn;
     private (int from, int to) lastCrossedBorder;
+    public int movesSinceLastCapture;
 
     public Board(int[] board)
     {
@@ -43,18 +44,30 @@ public class Board
             0, 1, 1, 2,
             0, 1, 2, 3,
             0, 2, 3, 3,
-        };*/
+        };
         board = new int[]
         {
             0, 0, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 3, 2,
+            0, 0, 0, 0,
+            0, 0, 3, 0,
             0, 0, 0, 0,
 
             0, 0, 0, 0,
             0, 1, 1, 2,
             0, 1, 2, 3,
             0, 2, 3, 3,
+        };*/
+        board = new int[]
+        {
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 3, 0,
+            0, 0, 0, 0,
+
+            0, 0, 0, 0,
+            0, 0, 0, 0,
+            0, 0, 3, 0,
+            0, 0, 0, 0,
         };
         PopulateTilesToEdge();
         p1Captures = new List<int>();
@@ -161,6 +174,8 @@ public class Board
     {
         int pieceType = board[from];
 
+        ++movesSinceLastCapture;
+
         if (board[to] != 0)
         {
             if (IsOnSameSide(from, to))
@@ -173,6 +188,7 @@ public class Board
                 PieceCaptured(to);
                 board[from] = 0;
                 board[to] = pieceType;
+                movesSinceLastCapture = 0;
             }
         }
         else
@@ -185,8 +201,6 @@ public class Board
         {
             lastCrossedBorder.from = from;
             lastCrossedBorder.to = to;
-
-            CheckGameOver();
         }
         else
         {
@@ -194,9 +208,11 @@ public class Board
             lastCrossedBorder.to = -1;
         }
 
+        CheckGameOver();
         playerOneTurn = !playerOneTurn;
 
-        Debug.Log(PrintBoard());
+        //Debug.Log(movesSinceLastCapture);
+        //Debug.Log(PrintBoard());
     }
 
     private void CheckGameOver()
@@ -224,10 +240,15 @@ public class Board
             }
         }
 
+        Debug.Log(movesSinceLastCapture);
+
+        if (!gameOver)
+            if(movesSinceLastCapture > 14)
+                gameOver = true;
+
+
         if (gameOver)
-        {
             SetWinner();
-        }
 
 
     }
@@ -237,7 +258,13 @@ public class Board
         int p1Points = p1Captures.AsQueryable().Sum();
         int p2Points = p2Captures.AsQueryable().Sum();
 
-        winner = p1Points > p2Points ? 1 : 2;
+        if (p1Points == p2Points)
+            winner = movesSinceLastCapture % 2 == 0 ? 2 : 1;
+        else if (p1Points > p2Points)
+            winner = 1;
+        else
+            winner = 2;
+
 
         return (int)winner;
     }
