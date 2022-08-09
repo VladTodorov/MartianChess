@@ -220,7 +220,8 @@ public class Helper : MonoBehaviour
     public GameObject GenerateTile(int x, int y, Transform parent)
     {
         GameObject tile = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        tile.name = string.Format("{0} {1}", x, y);
+        int i = Board.LENGTH_X * y + x;
+        tile.name = string.Format("{0} {1} {2}", x, y, i);
         tile.transform.parent = parent;
         tile.layer = LayerMask.NameToLayer("Tiles");
 

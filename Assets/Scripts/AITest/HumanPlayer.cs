@@ -6,6 +6,7 @@ public class HumanPlayer : MonoBehaviour
 {
     public const string type = "Human";
 
+    public int playerNumber;
 
     private GameObject selectedPiece;
     private GameObject selectedPieceMoveTo;

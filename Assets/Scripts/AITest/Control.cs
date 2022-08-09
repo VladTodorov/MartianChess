@@ -30,7 +30,7 @@ public class Control : MonoBehaviour
 
         InitPlayers();
         
-        StartCoroutine(PlayerTurn());
+        StartCoroutine(PlayerTurn());  //randomize playerTurn/botTurn
     }
 
     private IEnumerator PlayerTurn()
@@ -94,7 +94,10 @@ public class Control : MonoBehaviour
     {
         //randomize player 1
         player = gameObject.AddComponent<HumanPlayer>();
+        player.playerNumber = 1;
+
         bot = gameObject.AddComponent<BotPlayer>();
+        bot.playerNumber = 2;
     }
 
     private void GenerateTiles(int boardWidth, int boardHight)

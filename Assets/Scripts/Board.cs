@@ -20,8 +20,9 @@ public class Board
     public List<int> p2Captures;
 
     public bool playerOneTurn;
-    private (int from, int to) lastCrossedBorder;
+    public (int from, int to) lastCrossedBorder;
     public int movesSinceLastCapture;
+    private List<Move> moves;
 
     public Board(int[] board)
     {
@@ -33,7 +34,7 @@ public class Board
 
     public Board()
     {
-        /*board = new int[]
+        board = new int[]
         {
             3, 3, 2, 0,
             3, 2, 1, 0,
@@ -45,7 +46,7 @@ public class Board
             0, 1, 2, 3,
             0, 2, 3, 3,
         };
-        board = new int[]
+        /*board = new int[]
         {
             0, 0, 0, 0,
             0, 0, 0, 0,
@@ -56,7 +57,7 @@ public class Board
             0, 1, 1, 2,
             0, 1, 2, 3,
             0, 2, 3, 3,
-        };*/
+        };
         board = new int[]
         {
             0, 0, 0, 0,
@@ -68,12 +69,13 @@ public class Board
             0, 0, 0, 0,
             0, 0, 3, 0,
             0, 0, 0, 0,
-        };
+        };*/
         PopulateTilesToEdge();
         p1Captures = new List<int>();
         p2Captures = new List<int>();
         playerOneTurn = true;
         winner = null;
+        moves = new List<Move>();
     }
 
     public int Get(int i) => board[i];
@@ -208,14 +210,101 @@ public class Board
             lastCrossedBorder.to = -1;
         }
 
-        CheckGameOver();
+        
+        if (CheckGameOver())
+            SetWinner();
+
         playerOneTurn = !playerOneTurn;
 
         //Debug.Log(movesSinceLastCapture);
         //Debug.Log(PrintBoard());
     }
 
-    private void CheckGameOver()
+    public Move MakeMove(Move move)
+    {
+        int pieceType = board[move.from];
+        ++movesSinceLastCapture;
+
+        if (board[move.to] != 0)
+        {
+            move.capture = board[move.to];
+            if (IsOnSameSide(move.from, move.to))
+            {
+                board[move.to] = PiecePromote(move.from, move.to);
+                board[move.from] = 0;
+            }
+            else
+            {
+                PieceCaptured(move.to);
+                board[move.from] = 0;
+                board[move.to] = pieceType;
+                movesSinceLastCapture = 0;
+            }
+        }
+        else
+        {
+            board[move.from] = 0;
+            board[move.to] = pieceType;
+        }
+
+        // border crossed
+        if (!IsOnSameSide(move.from, move.to))
+        {
+            lastCrossedBorder.from = move.from;
+            lastCrossedBorder.to = move.to;
+        }
+        else
+        {
+            lastCrossedBorder.from = -1;
+            lastCrossedBorder.to = -1;
+        }
+
+        if (CheckGameOver())
+            SetWinner();
+
+        playerOneTurn = !playerOneTurn;
+
+        Debug.Log(PrintBoard());
+
+        return move;
+
+        //Debug.Log(movesSinceLastCapture);
+    }
+
+
+    public void UndoMove(Move move)
+    {
+        playerOneTurn = !playerOneTurn;
+
+        if (CheckGameOver())
+            winner = null;
+
+
+        board[move.from] = move.piece;
+        board[move.to] = move.capture;
+
+        if (move.capture != 0 && move.playerNum == 1)
+        {
+            if (p1Captures.Any())
+                p1Captures.RemoveAt(p1Captures.Count - 1);
+        }
+        else if (move.capture != 0 && move.playerNum == 2)
+        {
+            if (p2Captures.Any())
+                p2Captures.RemoveAt(p2Captures.Count - 1);
+        }
+            
+
+
+        lastCrossedBorder = (move.lastCrossedBorder.from, move.lastCrossedBorder.to);
+        movesSinceLastCapture = move.movesSinceLastCapture;
+
+        //Debug.Log(movesSinceLastCapture);
+        //Debug.Log(PrintBoard());
+    }
+
+
+    public bool CheckGameOver()
     {
         bool gameOver = true;
         for (int i = 0; i < MID_OF_BOARD; i++)
@@ -240,17 +329,13 @@ public class Board
             }
         }
 
-        Debug.Log(movesSinceLastCapture);
+        //Debug.Log(movesSinceLastCapture);
 
         if (!gameOver)
             if(movesSinceLastCapture > 14)
                 gameOver = true;
 
-
-        if (gameOver)
-            SetWinner();
-
-
+        return gameOver;
     }
 
     private int SetWinner()
@@ -258,7 +343,7 @@ public class Board
         int p1Points = p1Captures.AsQueryable().Sum();
         int p2Points = p2Captures.AsQueryable().Sum();
 
-        if (p1Points == p2Points)
+        if (p1Points == p2Points)    // fix to total moves
             winner = movesSinceLastCapture % 2 == 0 ? 2 : 1;
         else if (p1Points > p2Points)
             winner = 1;
@@ -304,6 +389,9 @@ public class Board
 
     public bool IsValidPiece(int pieceIndex) =>
         (playerOneTurn && pieceIndex < MID_OF_BOARD) || (!playerOneTurn && pieceIndex >= MID_OF_BOARD);
+
+    public static bool IsValidPiece(int pieceIndex, int playerNum) =>
+        (playerNum == 1 && pieceIndex < MID_OF_BOARD) || (playerNum == 2 && pieceIndex >= MID_OF_BOARD);
 
     public bool IsOnSameSide(int pos1, int pos2) =>
         (pos1 < MID_OF_BOARD && pos2 < MID_OF_BOARD) || (pos1 >= MID_OF_BOARD && pos2 >= MID_OF_BOARD);
