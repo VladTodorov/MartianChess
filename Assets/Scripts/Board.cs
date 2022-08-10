@@ -264,7 +264,7 @@ public class Board
 
         playerOneTurn = !playerOneTurn;
 
-        Debug.Log(PrintBoard());
+        //Debug.Log(PrintBoard());
 
         return move;
 
@@ -282,6 +282,8 @@ public class Board
 
         board[move.from] = move.piece;
         board[move.to] = move.capture;
+
+        //Debug.Log(move.capture);
 
         if (move.capture != 0 && move.playerNum == 1)
         {
@@ -364,10 +366,11 @@ public class Board
 
     public void PieceCaptured(int captred)
     {
-        if (captred < MID_OF_BOARD)
-            p2Captures.Add(captred);
+        //Debug.Log(captred);
+        if (playerOneTurn)
+            p1Captures.Add(board[captred]);
         else
-            p1Captures.Add(captred);
+            p2Captures.Add(board[captred]);
     }
 
     private bool CanPromoteTo(int piece)
@@ -443,7 +446,7 @@ public class Board
     //Debug
     public string PrintBoard()
     {
-        string boardString = "";
+        string boardString = "\n";
         for (int i = 1; i <= board.Length; i++)
         {
             if (i % 4 == 0)
@@ -452,6 +455,17 @@ public class Board
                 boardString += string.Format("{0} ", board[i - 1]);
         }
         return boardString;
+    }
+
+    public string PrintCaptures(List<int> cap)
+    {
+        string capString = "captures:  ";
+
+        foreach(int i in cap)
+        {
+            capString += string.Format("{0} ", i);
+        }
+        return capString;
     }
 
 

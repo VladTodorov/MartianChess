@@ -9,6 +9,7 @@ public class BotPlayer : MonoBehaviour
     public const string type = "Bot";
 
     public int playerNumber;
+    public int opponentNumber;
 
     private GameObject selectedPiece;
     private GameObject selectedPieceMoveTo;
@@ -16,13 +17,20 @@ public class BotPlayer : MonoBehaviour
 
     public IEnumerator MakeMove(Board board, Helper helper)
     {
+        //print("Bot Num: " + playerNumber);
         (Move move, int eval) = PickMove(board);
-        print(eval);
+        //print(eval);
+        print(board.PrintBoard());
+        //print(move.from + " " + move.to + "  e " + eval);
 
         selectedPiece = helper.GetGameObject(move.from);
         selectedPieceMoveTo = helper.GetGameObject(move.to);
 
-        helper.MakeMove(selectedPiece, selectedPieceMoveTo);
+        helper.MakeMove(selectedPiece, selectedPieceMoveTo, move.from, move.to);
+        board.MakeMove(move.from, move.to);
+
+        print(board.PrintBoard());
+
         yield break;
     }
 
@@ -31,7 +39,7 @@ public class BotPlayer : MonoBehaviour
 
     private (Move move, int eval) PickMove(Board board)
     {
-        List<Move> moves = AllLegalMoves(board);
+        List<Move> moves = AllLegalMoves(board, true);
 
         int maxEval = -10000000;
         Move bestMove = null;
@@ -40,7 +48,7 @@ public class BotPlayer : MonoBehaviour
         //for(int i = 0; i < 1; i++)
         {
             moves[i] = board.MakeMove(moves[i]);
-            int eval = MoveEvaluation(board, 1, true);
+            int eval = MoveEvaluation(board, 1, false);
             board.UndoMove(moves[i]);
 
             //print(moves[i].from + " " + moves[i].to+ "  e "+ eval);
@@ -61,13 +69,15 @@ public class BotPlayer : MonoBehaviour
     {
         if (depth == 0 || board.CheckGameOver())
         {
-            return BoardEvaluation(board);
+            int eval = BoardEvaluation(board);
+            //print(eval);
+            return eval;
         }
 
         if (maximizingPlayer)
         {
             int maxEval = -10000;
-            List<Move> moves = AllLegalMoves(board);
+            List<Move> moves = AllLegalMoves(board, maximizingPlayer);
 
             for (int i = 0; i < moves.Count; i++)
             {
@@ -85,12 +95,12 @@ public class BotPlayer : MonoBehaviour
         else
         {
             int minEval = 10000;
-            List<Move> moves = AllLegalMoves(board);
+            List<Move> moves = AllLegalMoves(board, maximizingPlayer);
 
             for (int i = 0; i < moves.Count; i++)
             {
                 moves[i] = board.MakeMove(moves[i]);
-                int eval = MoveEvaluation(board, depth - 1, false);
+                int eval = MoveEvaluation(board, depth - 1, true);
                 board.UndoMove(moves[i]);
 
                 if (eval < minEval)
@@ -111,21 +121,39 @@ public class BotPlayer : MonoBehaviour
             if (board.winner == playerNumber) return 100;
             else return -100;
         }
-
+        //print("PosNetPoints: " + PosNetPoints(board));
+        //print(board.PrintBoard());
         return PosNetPoints(board);
     }
 
-    private List<Move> AllLegalMoves(Board board)
+    private List<Move> AllLegalMoves(Board board, bool forPlayer)
     {
         List<Move> moves = new();
-        for(int i = 0; i < Board.LENGTH; ++i)
-        {
-            if(Board.IsValidPiece(i, playerNumber))
-            {
-                List<int> pieceMoves = board.GetLegalMoves(i);
 
-                foreach (int moveTo in pieceMoves)
-                    moves.Add(new Move(i, moveTo, board));
+        if (forPlayer)
+        {
+            for (int i = 0; i < Board.LENGTH; ++i)
+            {
+                if (Board.IsValidPiece(i, playerNumber))
+                {
+                    List<int> pieceMoves = board.GetLegalMoves(i);
+
+                    foreach (int moveTo in pieceMoves)
+                        moves.Add(new Move(i, moveTo, board));
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < Board.LENGTH; ++i)
+            {
+                if (Board.IsValidPiece(i, opponentNumber))
+                {
+                    List<int> pieceMoves = board.GetLegalMoves(i);
+
+                    foreach (int moveTo in pieceMoves)
+                        moves.Add(new Move(i, moveTo, board));
+                }
             }
         }
 
@@ -150,8 +178,23 @@ public class BotPlayer : MonoBehaviour
             opponentPoints = board.p1Captures.AsQueryable().Sum();
             botPoints = board.p2Captures.AsQueryable().Sum();
         }
-
+        //print("bot: " + botPoints + "   opp: " + opponentPoints);
+        //print(board.PrintCaptures(board.p2Captures));
         return botPoints - opponentPoints;
+    }
+
+    public void SetPlayerNumber (int playerNum)
+    {
+        if(playerNum == 1)
+        {
+            playerNumber = 1;
+            opponentNumber = 2;
+        }
+        else
+        {
+            playerNumber = 2;
+            opponentNumber = 1;
+        }
     }
 
 

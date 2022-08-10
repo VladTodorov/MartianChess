@@ -97,7 +97,7 @@ public class Control : MonoBehaviour
         player.playerNumber = 1;
 
         bot = gameObject.AddComponent<BotPlayer>();
-        bot.playerNumber = 2;
+        bot.SetPlayerNumber(2);
     }
 
     private void GenerateTiles(int boardWidth, int boardHight)

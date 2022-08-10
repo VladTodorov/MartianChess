@@ -84,7 +84,37 @@ public class Helper : MonoBehaviour
         int from = VectorToOneD(fromObj.transform.position);
         int to = VectorToOneD(toObj.transform.position);
 
+        //print("helper-  f: "+ from+"  to: "+to);
+        print("-----");
         board.MakeMove(from, to);
+
+        if (toObj.CompareTag("Piece"))
+        {
+            fromObj.GetComponent<Piece>().SetPosition(toObj.transform.position);
+
+            if (board.IsOnSameSide(from, to))
+            {
+                Destroy(fromObj);
+                Destroy(toObj);
+
+                GeneratePiece(board.PiecePromote(from, to), to);
+                //print(board.PiecePromote(from, to));
+            }
+            else
+            {
+                PieceCaptured(toObj);
+            }
+        }
+        else
+        {
+            fromObj.GetComponent<Piece>().SetPosition(toObj.transform.position + new Vector3(0, 0, -0.1f));
+            //selectedPiece.transform.position = selectedPieceMoveTo.transform.position + new Vector3(0,0,-1);
+        }
+
+    }
+
+    public void MakeMove(GameObject fromObj, GameObject toObj, int from, int to)
+    {
 
         if (toObj.CompareTag("Piece"))
         {
@@ -206,8 +236,14 @@ public class Helper : MonoBehaviour
         Vector3 direction = new(0, 0, 1);
 
         Vector3 objPos = OneDToVector(pos) + new Vector3(0, 0, -1);
-        Physics.Raycast(objPos, direction, out RaycastHit hit, 2.0f, bitmask);
+        //print(string.Format("vect- x: {0}  y: {1}", (int)objPos.x, (int)objPos.y));
+
+        Physics.Raycast(objPos, direction, out RaycastHit hit, 2.0f);
         Debug.DrawRay(objPos, direction, Color.blue, 15, false);
+
+        //print(string.Format("obj    - x: {0}  y: {1}", (int)hit.collider.gameObject.transform.position.x, (int)hit.collider.gameObject.transform.position.y));
+        //print(string.Format("obj loc- x: {0}  y: {1}", (int)hit.collider.gameObject.transform.localPosition.x, (int)hit.collider.gameObject.transform.localPosition.y));
+        //hit.collider.gameObject.GetComponent<MeshRenderer>().material = lightSquareMaterial[0];
 
         return hit.collider.gameObject;
     }
