@@ -217,7 +217,7 @@ public class Board
         playerOneTurn = !playerOneTurn;
 
         //Debug.Log(movesSinceLastCapture);
-        //Debug.Log(PrintBoard());
+        Debug.Log(PrintBoard());
     }
 
     public Move MakeMove(Move move)
@@ -358,7 +358,8 @@ public class Board
 
     public int PiecePromote(int from, int to)
     {
-        if (from == 2 || to == 2)
+        Debug.Log("Pieces: "+ board[from] + " "+ board[to]);
+        if (board[from] == 2 || board[to] == 2)
             return 3;
         else
             return 2;

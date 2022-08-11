@@ -106,7 +106,7 @@ public class NewBehaviourScript : MonoBehaviour
                 Destroy(fromObj);
                 Destroy(toObj);
 
-                GeneratePiece(board.PiecePromote(from, to), to);
+                GeneratePiece(board.Get(to), to);
                 //print(board.PiecePromote(from, to));
             }
             else
