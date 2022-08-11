@@ -17,9 +17,8 @@ public class Piece : MonoBehaviour
 
     void Update()
     {
-        //transform.position = desiredPos;
+        transform.position = desiredPos;
         //transform.position = Vector3.Lerp(transform.position, desiredPos, Time.deltaTime * 50f);
-        transform.position = Vector3.Lerp(transform.position, desiredPos, Time.deltaTime * 50f);
 
         transform.LookAt(target.transform);
         transform.Rotate(new Vector3(-90, 0,0));

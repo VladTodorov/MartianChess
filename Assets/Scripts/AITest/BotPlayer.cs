@@ -15,19 +15,26 @@ public class BotPlayer : MonoBehaviour
     private GameObject selectedPieceMoveTo;
     //List<int> legalMoves = null;
 
+    int nodes;
+    int positions;
+
     public IEnumerator MakeMove(Board board, Helper helper)
     {
         //print("Bot Num: " + playerNumber);
+        nodes = 0;
+        positions = 0;
+
         (Move move, int eval) = PickMove(board);
-        //print(eval);
+
         print(board.PrintBoard());
-        //print(move.from + " " + move.to + "  e " + eval);
+        print("nodes searched: " + nodes + "  positions searched: " + positions);
 
         selectedPiece = helper.GetGameObject(move.from);
         selectedPieceMoveTo = helper.GetGameObject(move.to);
 
-        helper.MakeMove(selectedPiece, selectedPieceMoveTo, move.from, move.to);
-        board.MakeMove(move.from, move.to);
+        helper.MakeMove(selectedPiece, selectedPieceMoveTo);
+        //helper.MakeMove(selectedPiece, selectedPieceMoveTo, move.from, move.to);
+        //board.MakeMove(move.from, move.to);
 
         print(board.PrintBoard());
 
@@ -48,7 +55,7 @@ public class BotPlayer : MonoBehaviour
         //for(int i = 0; i < 1; i++)
         {
             moves[i] = board.MakeMove(moves[i]);
-            int eval = MoveEvaluation(board, 1, false);
+            int eval = MoveEvaluation(board, 2, false);
             board.UndoMove(moves[i]);
 
             //print(moves[i].from + " " + moves[i].to+ "  e "+ eval);
@@ -64,13 +71,14 @@ public class BotPlayer : MonoBehaviour
         return (bestMove, maxEval);
     }
 
-
+    //minimax here
     private int MoveEvaluation(Board board, int depth, bool maximizingPlayer)
     {
         if (depth == 0 || board.CheckGameOver())
         {
-            int eval = BoardEvaluation(board);
-            //print(eval);
+            int eval = BoardEvaluation(board);   //print(eval);
+            ++nodes;
+            ++positions;
             return eval;
         }
 
@@ -83,6 +91,7 @@ public class BotPlayer : MonoBehaviour
             {
                 moves[i] = board.MakeMove(moves[i]);
                 int eval = MoveEvaluation(board, depth - 1, false);
+                ++nodes;
                 board.UndoMove(moves[i]);
 
                 if (eval > maxEval)
@@ -101,6 +110,7 @@ public class BotPlayer : MonoBehaviour
             {
                 moves[i] = board.MakeMove(moves[i]);
                 int eval = MoveEvaluation(board, depth - 1, true);
+                ++nodes;
                 board.UndoMove(moves[i]);
 
                 if (eval < minEval)
