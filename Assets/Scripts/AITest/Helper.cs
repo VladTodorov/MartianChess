@@ -85,7 +85,7 @@ public class Helper : MonoBehaviour
         int to = VectorToOneD(toObj.transform.position);
 
         //print("helper-  f: "+ from+"  to: "+to);
-        print("-----");
+        //print("-----");
         board.MakeMove(from, to);
 
         if (toObj.CompareTag("Piece"))

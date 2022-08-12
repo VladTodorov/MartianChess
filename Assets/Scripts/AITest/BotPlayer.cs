@@ -25,8 +25,9 @@ public class BotPlayer : MonoBehaviour
         positions = 0;
 
         (Move move, int eval) = PickMove(board);
-
-        print(board.PrintBoard());
+        print("eval  " + eval);
+        //print(board.PrintBoard());
+        print("p1: " + board.PrintCaptures(board.p1Captures) + "   p2: " + board.PrintCaptures(board.p2Captures));
         print("nodes searched: " + nodes + "  positions searched: " + positions);
 
         selectedPiece = helper.GetGameObject(move.from);
@@ -48,14 +49,16 @@ public class BotPlayer : MonoBehaviour
     {
         List<Move> moves = AllLegalMoves(board, true);
 
-        int maxEval = -10000000;
+        int maxEval = -1000000;
         Move bestMove = null;
         
         for(int i = 0; i < moves.Count; i++)
         //for(int i = 0; i < 1; i++)
         {
             moves[i] = board.MakeMove(moves[i]);
-            int eval = MoveEvaluation(board, 2, false);
+            //int eval = MoveEvaluation(board, 3, false);
+            int eval = MoveEvaluation(board, 3, -1000000, 1000000, false);
+            //int eval = MoveEvaluation(board, 1, -1000000, 1000000, opponentNumber);
             board.UndoMove(moves[i]);
 
             //print(moves[i].from + " " + moves[i].to+ "  e "+ eval);
@@ -71,7 +74,7 @@ public class BotPlayer : MonoBehaviour
         return (bestMove, maxEval);
     }
 
-    //minimax here
+    //minimax
     private int MoveEvaluation(Board board, int depth, bool maximizingPlayer)
     {
         if (depth == 0 || board.CheckGameOver())
@@ -123,6 +126,65 @@ public class BotPlayer : MonoBehaviour
 
     }
 
+    //minimax with alpha bata pruning
+    private int MoveEvaluation(Board board, int depth, int alpha, int beta, bool maximizingPlayer)
+    {
+        if (depth == 0 || board.CheckGameOver())
+        {
+            int eval = BoardEvaluation(board);   //print(eval);
+            ++nodes;
+            ++positions;
+            return eval;
+        }
+
+        if (maximizingPlayer)
+        {
+            int maxEval = -10000;
+            List<Move> moves = AllLegalMoves(board, maximizingPlayer);
+
+            for (int i = 0; i < moves.Count; i++)
+            {
+                moves[i] = board.MakeMove(moves[i]);
+                int eval = MoveEvaluation(board, depth - 1, alpha, beta, false);
+                ++nodes;
+                board.UndoMove(moves[i]);
+
+                maxEval = Math.Max(eval, maxEval);
+                
+                alpha = Math.Max(alpha, eval);
+                if (beta <= alpha)
+                {
+                    break;
+                }
+            }
+            return maxEval;
+        }
+        else
+        {
+            int minEval = 10000;
+            List<Move> moves = AllLegalMoves(board, maximizingPlayer);
+
+            for (int i = 0; i < moves.Count; i++)
+            {
+                moves[i] = board.MakeMove(moves[i]);
+                int eval = MoveEvaluation(board, depth - 1, alpha, beta, true);
+                ++nodes;
+                board.UndoMove(moves[i]);
+
+                minEval = Math.Min(minEval, eval);
+                
+                beta = Math.Min(beta, eval);
+                if (beta <= alpha)
+                {
+                    break;
+                }
+            }
+            return minEval;
+        }
+    }
+
+
+
     private int BoardEvaluation(Board board)
     {
 
@@ -136,6 +198,23 @@ public class BotPlayer : MonoBehaviour
         return PosNetPoints(board);
     }
 
+    private int BoardEvaluation(Board board, int playerNum)
+    {
+
+        if (board.CheckGameOver())
+        {
+            if (board.winner == playerNum) return 100;
+            else return -100;
+        }
+        //print("PosNetPoints: " + PosNetPoints(board));
+        //print(board.PrintBoard());
+        if(playerNum == playerNumber)
+            return PosNetPoints(board);
+        else 
+            return -PosNetPoints(board);
+    }
+
+    
     private List<Move> AllLegalMoves(Board board, bool forPlayer)
     {
         List<Move> moves = new();
@@ -172,7 +251,27 @@ public class BotPlayer : MonoBehaviour
         return moves;
     }
 
+    private List<Move> AllLegalMoves(Board board, int playerNum)
+    {
+        List<Move> moves = new();
 
+        for (int i = 0; i < Board.LENGTH; ++i)
+        {
+            if (Board.IsValidPiece(i, playerNum))
+            {
+                List<int> pieceMoves = board.GetLegalMoves(i);
+
+                foreach (int moveTo in pieceMoves)
+                    moves.Add(new Move(i, moveTo, board));
+            }
+        }
+
+        //moves.Sort(); captures first
+
+        return moves;
+    }
+
+   
     private int PosNetPoints(Board board)
     {
         int botPoints = 0;
@@ -191,6 +290,13 @@ public class BotPlayer : MonoBehaviour
         //print("bot: " + botPoints + "   opp: " + opponentPoints);
         //print(board.PrintCaptures(board.p2Captures));
         return botPoints - opponentPoints;
+    }
+
+    int OtherPlayer(int curPlayer)
+    {
+        if (curPlayer == 1)
+            return 2;
+        else return 1;
     }
 
     public void SetPlayerNumber (int playerNum)
