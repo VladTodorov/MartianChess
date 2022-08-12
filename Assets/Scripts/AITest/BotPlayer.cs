@@ -56,9 +56,11 @@ public class BotPlayer : MonoBehaviour
         //for(int i = 0; i < 1; i++)
         {
             moves[i] = board.MakeMove(moves[i]);
-            //int eval = MoveEvaluation(board, 3, false);
-            int eval = MoveEvaluation(board, 3, -1000000, 1000000, false);
-            //int eval = MoveEvaluation(board, 1, -1000000, 1000000, opponentNumber);
+
+            //int eval = MoveEvaluationMinimax(board, 3, false);
+            //int eval = MoveEvaluationAlphaBeta(board, 3, -1000000, 1000000, false);
+            int eval = MoveEvaluationSort(board, 3, -1000000, 1000000, false);
+
             board.UndoMove(moves[i]);
 
             //print(moves[i].from + " " + moves[i].to+ "  e "+ eval);
@@ -75,7 +77,8 @@ public class BotPlayer : MonoBehaviour
     }
 
     //minimax
-    private int MoveEvaluation(Board board, int depth, bool maximizingPlayer)
+    //nodes searched: 105,712  positions searched: 51,081  depth 3
+    private int MoveEvaluationMinimax(Board board, int depth, bool maximizingPlayer)
     {
         if (depth == 0 || board.CheckGameOver())
         {
@@ -93,7 +96,7 @@ public class BotPlayer : MonoBehaviour
             for (int i = 0; i < moves.Count; i++)
             {
                 moves[i] = board.MakeMove(moves[i]);
-                int eval = MoveEvaluation(board, depth - 1, false);
+                int eval = MoveEvaluationMinimax(board, depth - 1, false);
                 ++nodes;
                 board.UndoMove(moves[i]);
 
@@ -112,7 +115,7 @@ public class BotPlayer : MonoBehaviour
             for (int i = 0; i < moves.Count; i++)
             {
                 moves[i] = board.MakeMove(moves[i]);
-                int eval = MoveEvaluation(board, depth - 1, true);
+                int eval = MoveEvaluationMinimax(board, depth - 1, true);
                 ++nodes;
                 board.UndoMove(moves[i]);
 
@@ -127,7 +130,8 @@ public class BotPlayer : MonoBehaviour
     }
 
     //minimax with alpha bata pruning
-    private int MoveEvaluation(Board board, int depth, int alpha, int beta, bool maximizingPlayer)
+    //nodes searched: 22,907  positions searched: 10,738  depth 3
+    private int MoveEvaluationAlphaBeta(Board board, int depth, int alpha, int beta, bool maximizingPlayer)
     {
         if (depth == 0 || board.CheckGameOver())
         {
@@ -145,7 +149,7 @@ public class BotPlayer : MonoBehaviour
             for (int i = 0; i < moves.Count; i++)
             {
                 moves[i] = board.MakeMove(moves[i]);
-                int eval = MoveEvaluation(board, depth - 1, alpha, beta, false);
+                int eval = MoveEvaluationAlphaBeta(board, depth - 1, alpha, beta, false);
                 ++nodes;
                 board.UndoMove(moves[i]);
 
@@ -167,7 +171,7 @@ public class BotPlayer : MonoBehaviour
             for (int i = 0; i < moves.Count; i++)
             {
                 moves[i] = board.MakeMove(moves[i]);
-                int eval = MoveEvaluation(board, depth - 1, alpha, beta, true);
+                int eval = MoveEvaluationAlphaBeta(board, depth - 1, alpha, beta, true);
                 ++nodes;
                 board.UndoMove(moves[i]);
 
@@ -183,6 +187,65 @@ public class BotPlayer : MonoBehaviour
         }
     }
 
+    //minimax with alpha bata pruning and move sorting
+    //nodes searched: 8,283  positions searched: 3,753  depth 3
+    private int MoveEvaluationSort(Board board, int depth, int alpha, int beta, bool maximizingPlayer)
+    {
+        if (depth == 0 || board.CheckGameOver())
+        {
+            int eval = BoardEvaluation(board);   //print(eval);
+            ++nodes;
+            ++positions;
+            return eval;
+        }
+
+        if (maximizingPlayer)
+        {
+            int maxEval = -10000;
+            List<Move> moves = AllLegalMoves(board, maximizingPlayer);
+            moves.Sort((x, y) => y.capture.CompareTo(x.capture));
+
+            for (int i = 0; i < moves.Count; i++)
+            {
+                moves[i] = board.MakeMove(moves[i]);
+                int eval = MoveEvaluationSort(board, depth - 1, alpha, beta, false);
+                ++nodes;
+                board.UndoMove(moves[i]);
+
+                maxEval = Math.Max(eval, maxEval);
+
+                alpha = Math.Max(alpha, eval);
+                if (beta <= alpha)
+                {
+                    break;
+                }
+            }
+            return maxEval;
+        }
+        else
+        {
+            int minEval = 10000;
+            List<Move> moves = AllLegalMoves(board, maximizingPlayer);
+            moves.Sort((x, y) => y.capture.CompareTo(x.capture));
+
+            for (int i = 0; i < moves.Count; i++)
+            {
+                moves[i] = board.MakeMove(moves[i]);
+                int eval = MoveEvaluationSort(board, depth - 1, alpha, beta, true);
+                ++nodes;
+                board.UndoMove(moves[i]);
+
+                minEval = Math.Min(minEval, eval);
+
+                beta = Math.Min(beta, eval);
+                if (beta <= alpha)
+                {
+                    break;
+                }
+            }
+            return minEval;
+        }
+    }
 
 
     private int BoardEvaluation(Board board)
