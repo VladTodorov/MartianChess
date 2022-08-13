@@ -359,7 +359,7 @@ public class Board
 
     public int PiecePromote(int from, int to)
     {
-        Debug.Log("Pieces: "+ board[from] + " "+ board[to]);
+        //Debug.Log("Pieces: "+ board[from] + " "+ board[to]);
         if (board[from] == 2 || board[to] == 2)
             return 3;
         else

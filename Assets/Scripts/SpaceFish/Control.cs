@@ -76,18 +76,20 @@ public class Control : MonoBehaviour
 
 
     //Init
-    private void InitBoard()
+    private void InitBoard(bool havePieceLookAt = false)
     {
         board = new Board();
-        cam.transform.position = new Vector3((float)Board.LENGTH_X / 2 - 0.5f, (float)Board.LENGTH_Y / 2 - 0.5f, -10f);
+        //cam.transform.position = new Vector3((float)Board.LENGTH_X / 2 - 0.5f, (float)Board.LENGTH_Y / 2 - 0.5f, -10f);
 
         GenerateTiles(Board.LENGTH_X, Board.LENGTH_Y);
         GeneratePieces();
 
-        //remove this
-        GameObject pieceLookAt = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        pieceLookAt.transform.position = new Vector3((float)Board.LENGTH_X / 2 - 0.5f, (float)Board.LENGTH_Y / 2 - 0.5f, 3f);
-        pieceLookAt.tag = "PieceLookAt";
+        if (havePieceLookAt)
+        {
+            GameObject pieceLookAt = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            pieceLookAt.transform.position = new Vector3((float)Board.LENGTH_X / 2 - 0.5f, (float)Board.LENGTH_Y / 2 - 0.5f, 3f);
+            pieceLookAt.tag = "PieceLookAt";
+        }
     }
 
     private void InitPlayers()
