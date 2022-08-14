@@ -51,19 +51,21 @@ public class BotPlayer : MonoBehaviour
 
         int maxEval = -1000000;
         Move bestMove = null;
-        
-        for(int i = 0; i < moves.Count; i++)
+        int a = -1000000;
+
+
+        for (int i = 0; i < moves.Count; i++)
         //for(int i = 0; i < 1; i++)
         {
             moves[i] = board.MakeMove(moves[i]);
 
             //int eval = MoveEvaluationMinimax(board, 3, false);
             //int eval = MoveEvaluationAlphaBeta(board, 3, -1000000, 1000000, false);
-            int eval = MoveEvaluationSort(board, 3, -1000000, 1000000, false);
+            int eval = MoveEvaluationSort(board, 3, a, 1000000, false);
 
             board.UndoMove(moves[i]);
 
-            //print(moves[i].from + " " + moves[i].to+ "  e "+ eval);
+            a = Math.Max(a, eval);
 
             if (eval > maxEval)
             {
@@ -189,6 +191,7 @@ public class BotPlayer : MonoBehaviour
 
     //minimax with alpha bata pruning and move sorting
     //nodes searched: 8,283  positions searched: 3,753  depth 3
+    //nodes searched: 2,090  positions searched: 841  depth 3  -- newest optimization
     private int MoveEvaluationSort(Board board, int depth, int alpha, int beta, bool maximizingPlayer)
     {
         if (depth == 0 || board.CheckGameOver())

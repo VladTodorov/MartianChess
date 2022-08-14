@@ -11,6 +11,11 @@ public class Piece : MonoBehaviour
     private void Start()
     {
         target = GameObject.FindGameObjectWithTag("PieceLookAt");
+
+        transform.forward = new Vector3(0, 90, 90);
+
+        //desiredPos = transform.position;
+
         if(target != null)
         {
             transform.forward = new Vector3(0, 90, 90);
@@ -21,7 +26,7 @@ public class Piece : MonoBehaviour
             transform.Rotate(new Vector3(0, 45, 0));
             desiredPos = transform.position;
         }
-        
+
     }
 
     void Update()
