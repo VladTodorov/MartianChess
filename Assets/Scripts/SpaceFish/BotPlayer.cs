@@ -27,13 +27,14 @@ public class BotPlayer : MonoBehaviour
         (Move move, int eval) = PickMove(board);
         print("eval  " + eval);
         //print(board.PrintBoard());
-        print("p1: " + board.PrintCaptures(board.p1Captures) + "   p2: " + board.PrintCaptures(board.p2Captures));
-        print("nodes searched: " + nodes + "  positions searched: " + positions);
+        //print("nodes searched: " + nodes + "  positions searched: " + positions);
 
         selectedPiece = helper.GetGameObject(move.from);
         selectedPieceMoveTo = helper.GetGameObject(move.to);
 
         helper.MakeMove(selectedPiece, selectedPieceMoveTo);
+        print("p1: " + board.PrintCaptures(board.p1Captures) + "   p2: " + board.PrintCaptures(board.p2Captures));
+
         //helper.MakeMove(selectedPiece, selectedPieceMoveTo, move.from, move.to);
         //board.MakeMove(move.from, move.to);
 
@@ -80,6 +81,7 @@ public class BotPlayer : MonoBehaviour
 
     //minimax
     //nodes searched: 105,712  positions searched: 51,081  depth 3
+    //    pawn 4,4  drone 4,4  drone 4,3  pawn 5,4
     private int MoveEvaluationMinimax(Board board, int depth, bool maximizingPlayer)
     {
         if (depth == 0 || board.CheckGameOver())

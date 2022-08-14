@@ -39,7 +39,8 @@ public class Control : MonoBehaviour
 
         if (board.winner != null)
         {
-            StartCoroutine(GameOver());
+            print(board.winner);
+            StartCoroutine(GameOver((int)board.winner));
             yield break;
         }
 
@@ -56,7 +57,7 @@ public class Control : MonoBehaviour
 
         if (board.winner != null)
         {
-            StartCoroutine(GameOver());
+            StartCoroutine(GameOver((int)board.winner));
             yield break;
         }
 
@@ -67,11 +68,11 @@ public class Control : MonoBehaviour
     }
 
 
-    public IEnumerator GameOver()
+    public IEnumerator GameOver(int winner)
     {
         // play a gameover sound here
         yield return new WaitForSeconds(3.0f);
-        gameOverScreen.Setup(1);
+        gameOverScreen.Setup(winner);
     }
 
 
