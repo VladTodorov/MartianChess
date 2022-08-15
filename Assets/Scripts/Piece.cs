@@ -12,16 +12,17 @@ public class Piece : MonoBehaviour
     {
         target = GameObject.FindGameObjectWithTag("PieceLookAt");
 
-        transform.forward = new Vector3(0, 90, 90);
-
+        //transform.forward = new Vector3(0, 90, 90);
         //desiredPos = transform.position;
 
-        if(target != null)
+        if (target != null)
         {
             transform.forward = new Vector3(0, 90, 90);
+            desiredPos = transform.position;
         }
         else
         {
+
             transform.forward = new Vector3(0, 90, 0);
             transform.Rotate(new Vector3(0, 45, 0));
             desiredPos = transform.position;

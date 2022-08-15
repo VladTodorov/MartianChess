@@ -34,7 +34,7 @@ public class Board
 
     public Board()
     {
-        /*board = new int[]
+        board = new int[]
         {
             3, 3, 2, 0,
             3, 2, 1, 0,
@@ -46,7 +46,7 @@ public class Board
             0, 1, 2, 3,
             0, 2, 3, 3,
         };
-        
+        /*
         board = new int[]
         {
             1, 0, 0, 0,
@@ -58,7 +58,7 @@ public class Board
             0, 1, 1, 2,
             0, 1, 2, 3,
             0, 2, 3, 3,
-        };*/
+        };*//*
         board = new int[]
         {
             0, 0, 0, 0,
@@ -70,7 +70,7 @@ public class Board
             0, 0, 0, 0,
             0, 0, 3, 0,
             0, 0, 0, 0,
-        };
+        };*/
         PopulateTilesToEdge();
         p1Captures = new List<int>();
         p2Captures = new List<int>();
