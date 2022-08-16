@@ -15,6 +15,7 @@ public class Piece : MonoBehaviour
     {
         target = GameObject.FindGameObjectWithTag("PieceLookAt");
 
+        startPos = new Vector3(1.5f, 3.5f, -1);
 
         if (target != null)    //unneeded?
         {

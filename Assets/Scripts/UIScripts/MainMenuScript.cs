@@ -6,11 +6,14 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuScript : MonoBehaviour
 {
-    public void PlayGame()
+    public void PlayPlayerVsPlayer()
     {
         SceneManager.LoadScene("SampleScene");
     }
 
-
+    public void PlayPlayerVsBot()
+    {
+        SceneManager.LoadScene("PlayerVsBot");
+    }
 
 }
