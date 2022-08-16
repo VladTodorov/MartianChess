@@ -6,16 +6,17 @@ public class Piece : MonoBehaviour
 {
     public GameObject target;
 
+    private Vector3 startPos;
     private Vector3 desiredPos;
+    private float elapsedTime;
+    private float desiredDuration = 0.5f;
 
     private void Start()
     {
         target = GameObject.FindGameObjectWithTag("PieceLookAt");
 
-        //transform.forward = new Vector3(0, 90, 90);
-        //desiredPos = transform.position;
 
-        if (target != null)
+        if (target != null)    //unneeded?
         {
             transform.forward = new Vector3(0, 90, 90);
             desiredPos = transform.position;
@@ -32,8 +33,14 @@ public class Piece : MonoBehaviour
 
     void Update()
     {
-        transform.position = desiredPos;
-        //transform.position = Vector3.Lerp(transform.position, desiredPos, Time.deltaTime * 50f);
+        //transform.position = desiredPos;
+
+        elapsedTime += Time.deltaTime;
+        float percentComplete = elapsedTime / desiredDuration;
+
+        transform.position = Vector3.Lerp(startPos, desiredPos, Mathf.SmoothStep(0, 1, percentComplete));
+
+
 
         if(target != null)
         {
@@ -46,9 +53,12 @@ public class Piece : MonoBehaviour
 
     public void SetPosition(Vector3 newPos)
     {
+        startPos = transform.position;
         desiredPos = newPos;
+        elapsedTime = 0;
     }
 
+    //public
 
 
 }
