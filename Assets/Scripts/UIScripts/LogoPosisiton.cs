@@ -16,7 +16,7 @@ public class LogoPosisiton : MonoBehaviour
         if (!isFlush)
         {
             Vector2 pos = rectTransform.position;
-            pos.y += 26;
+            pos.y += 50;
             rectTransform.position = pos;
         }
     }
