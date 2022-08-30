@@ -80,8 +80,8 @@ public class BotPlayer : MonoBehaviour
     }
 
     //minimax
-    //nodes searched: 105,712  positions searched: 51,081  depth 3
     //    pawn 4,4  drone 4,4  drone 4,3  pawn 5,4
+    //nodes searched: 105,712  positions searched: 51,081  depth 3
     private int MoveEvaluationMinimax(Board board, int depth, bool maximizingPlayer)
     {
         if (depth == 0 || board.CheckGameOver())
@@ -252,7 +252,7 @@ public class BotPlayer : MonoBehaviour
         }
     }
 
-
+    System.Random random = new System.Random();
     private int BoardEvaluation(Board board)
     {
 
@@ -263,7 +263,10 @@ public class BotPlayer : MonoBehaviour
         }
         //print("PosNetPoints: " + PosNetPoints(board));
         //print(board.PrintBoard());
-        return PosNetPoints(board);
+
+        int eval = PosNetPoints(board) * 100 + random.Next(0, 9);
+
+        return eval;
     }
 
     private int BoardEvaluation(Board board, int playerNum)
